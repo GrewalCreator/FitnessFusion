@@ -14,6 +14,7 @@ function App(){
       }
     )
   }, [])
+  
   return (
     <div>
       {(typeof data.object === 'undefined') ? (
