@@ -39,3 +39,4 @@ What Can Admin-Staff Do?:
 - INVALID_EMAIL: Email Does Not Exist In Table
 - INVALID_PASSWORD: Incorrect Password for Corresponding Email Entry
 - INVALID_DOB: Date of Birth is Below 14 years of age and therefore an account cannot be created
+- MISSING_ENTRY: Missing Input Data
