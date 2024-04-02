@@ -36,7 +36,18 @@ What Can Admin-Staff Do?:
 ## Development
 
 ### Error Codes
-- INVALID_EMAIL: Email Does Not Exist In Table
-- INVALID_PASSWORD: Incorrect Password for Corresponding Email Entry
-- INVALID_DOB: Date of Birth is Below 14 years of age and therefore an account cannot be created
-- MISSING_ENTRY: Missing Input Data
+- 400 MISSING_ENTRY: Input Entry Missing
+- 400 INVALID_DOB: Invalid Date of Birth, Ensure Format is YYYY-MM-DD
+- 400 INVALID_PASSWORD: Invalid Password
+- 400 INVALID_EMAIL: Invalid Email
+- 400 INVALID_GENDER: Invalid Gender. Please Enter Male, Female, or Other (M, F, O)
+- 400 INVALID_MEMBER_TYPE: Invalid Member Type. Expected: Client, Trainer, Admin-Staff
+- 409 EMAIL_UNAVAILABLE: Email Unavailable, Already In Use
+
+### Endpoints
+Sample Input Can Be Found Here:
+https://www.postman.com/telecoms-saganist-9479667/workspace/postconnect/request/19276775-2552fd9d-063d-43f8-9704-6e557e8c4a3f?tab=body
+
+#### /addMembers
+This endpoint is used to add new users to the database and should be used for registration purposes. 
+Information Regarding the input parameters and expected output can be found [here](https://www.postman.com/telecoms-saganist-9479667/workspace/postconnect/request/19276775-2552fd9d-063d-43f8-9704-6e557e8c4a3f?tab=body) or using the link above

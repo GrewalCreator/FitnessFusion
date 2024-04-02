@@ -1,0 +1,4 @@
+sql:
+  addMember: INSERT INTO Members (FirstName, LastName, Email, Password, DOB, Gender, MemberType)
+    VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT (Email) DO NOTHING RETURNING MemberID;
+  addClient: INSERT INTO Clients (MemberID) VALUES (%s) ON CONFLICT (MemberID) DO NOTHING;
