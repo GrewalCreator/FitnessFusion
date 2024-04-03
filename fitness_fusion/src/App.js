@@ -1,31 +1,17 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Routes instead of Switch
+import LandingPage from './templates/LandingPage';
+import ProfilePage from './templates/ProfilePage';
 
-function App(){
-
-  const [data, setData] = useState('')
-
-  useEffect(() => {
-    fetch("/test").then(
-      res => res.json()
-    ).then(
-      data => {
-        setData(data)
-        console.log(data)
-      }
-    )
-  }, [])
-  
+function App() {
   return (
-    <div>
-      {(typeof data.object === 'undefined') ? (
-        <p>Loading...</p>
-      ) : (
-        data.object.map((o, i) => (
-          <p key={i}>{o}</p>
-        ))
-      )}
-    </div>
-  )
+    <Router>
+      <Routes> {
+        <Route path="/" element={<LandingPage />} />}
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
