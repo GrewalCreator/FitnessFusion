@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS Members (
     FirstName TEXT NOT NULL,
     LastName TEXT NOT NULL,
     Email TEXT UNIQUE NOT NULL,
-    Password TEXT NOT NULL,
+    Password BYTEA NOT NULL,
     DOB DATE NOT NULL,
     Gender CHAR(1) NOT NULL,
     MemberType TEXT NOT NULL,

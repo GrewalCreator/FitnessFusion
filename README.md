@@ -43,6 +43,7 @@ What Can Admin-Staff Do?:
 - 400 INVALID_GENDER: Invalid Gender. Please Enter Male, Female, or Other (M, F, O)
 - 400 INVALID_MEMBER_TYPE: Invalid Member Type. Expected: Client, Trainer, Admin-Staff
 - 409 EMAIL_UNAVAILABLE: Email Unavailable, Already In Use
+- 404 EMAIL_NOT_FOUND: Email Not Found
 
 ### Endpoints
 Sample Input Can Be Found Here:
@@ -51,3 +52,6 @@ https://www.postman.com/telecoms-saganist-9479667/workspace/postconnect/request/
 #### /addMembers
 This endpoint is used to add new users to the database and should be used for registration purposes. 
 Information Regarding the input parameters and expected output can be found [here](https://www.postman.com/telecoms-saganist-9479667/workspace/postconnect/request/19276775-2552fd9d-063d-43f8-9704-6e557e8c4a3f?tab=body) or using the link above
+
+#### /login
+This endpoint is used to verify the users login credentials. Using addMembers, the password was hashed and stored in the database as binary data. /login will check against the hashed password to verify the correct password. Information Regarding the input parameters and expected output can be found [here](https://www.postman.com/telecoms-saganist-9479667/workspace/postconnect/request/19276775-2552fd9d-063d-43f8-9704-6e557e8c4a3f?tab=body) or using the link above
