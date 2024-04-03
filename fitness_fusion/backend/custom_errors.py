@@ -20,3 +20,5 @@ INVALID_MEMBER_TYPE = Error(400, "Invalid Member Type. Expected: Client, Trainer
 EMAIL_UNAVAILABLE = Error(409, "Email Unavailable, Already In Use", "EMAIL_UNAVAILABLE")
 
 MEMBER_ID_NOT_FOUND = Error(404, "Member ID Was Not Found", "MEMBER_ID_NOT_FOUND")
+
+EMAIL_NOT_FOUND = Error(404, "Email Not Found", "EMAIL_NOT_FOUND")

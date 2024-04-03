@@ -30,11 +30,14 @@ if url:
     url = url.replace("$PASSWORD", PASSWORD)
 
 
-
+#######################################################################################################################
 
 @app.route("/test")
 def index():
     return {"object":["1", "2", "3"]}
+
+
+#######################################################################################################################
 
 
 @app.route("/setup", methods=['POST'])
@@ -50,6 +53,7 @@ def setup_db():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/purge_cleanup", methods=['DELETE'])
 def purge():
     try:
@@ -63,6 +67,45 @@ def purge():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+
+
+#######################################################################################################################
+
+@app.route("/login", methods=['POST'])
+def login():
+    loginFields = ['email', 'password']
+    
+    try:
+        data = request.json
+        if any(field not in data for field in loginFields):
+            raise MISSING_ENTRY
+        
+        with open("queries.yaml") as file_object:
+            parsed_yaml = yload(file_object)
+            sql_email_search = parsed_yaml["sql"]["searchByEmail"]
+
+        with psycopg2.connect(url) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_email_search, (data['email'],))
+                if cursor.rowcount == 0:
+                    raise EMAIL_NOT_FOUND
+                
+                columns = [desc[0] for desc in cursor.description]
+                row = cursor.fetchone()
+                password_index = columns.index('password')
+                stored_password = row[password_index]
+                if verify_password(data['password'], stored_password):
+                    connection.commit()
+                    return jsonify({"message": "Member Logged-In Successfully"}), 200
+                else:
+                    raise INVALID_PASSWORD
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+#######################################################################################################################
+    
 
 def addClient(member_id):
     try:
@@ -89,7 +132,7 @@ def addClient(member_id):
         connection.rollback()
         return jsonify({"error": str(e)}), 500
 
-
+####################################################
 
 @app.route("/addMember", methods=['POST'])
 def addMember():
@@ -141,7 +184,7 @@ def addMember():
         connection.rollback()
         return jsonify({"error": str(e)}), 500
     
-
+####################################################
 
 def convert_gender(val: str):
     val = val.lower()
@@ -156,10 +199,15 @@ def convert_gender(val: str):
 
     return genders.get(val)
 
+####################################################
+
+
 def validate_email(email: str):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return bool(re.match(pattern, email))
-    
+
+####################################################
+ 
 def convert_member_type(member_type: str):
     member_type = member_type.lower()
     members = {
@@ -169,3 +217,14 @@ def convert_member_type(member_type: str):
     }
 
     return members.get(member_type)
+
+#######################################################################################################################
+
+@app.route("/updateEmail", methods=['PUT'])
+def updateEmail():
+    pass
+
+
+@app.route("/updatePassword", methods=['PUT'])
+def updatePassword():
+    pass
