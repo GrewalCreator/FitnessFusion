@@ -3,3 +3,6 @@ sql:
     VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT (Email) DO NOTHING RETURNING MemberID;
   addClient: INSERT INTO Clients (MemberID) VALUES (%s) ON CONFLICT (MemberID) DO NOTHING;
   searchByEmail: SELECT * FROM Members WHERE Email = %s;
+  updateEmail: UPDATE Members SET Email = %s WHERE Email = %s;
+  getAllMembers: SELECT MemberID, FirstName, LastName, Email, DOB, Gender, MemberType, JoinDate FROM Members;
+  updatePassword: UPDATE Members SET Password = %s WHERE Email = %s;
