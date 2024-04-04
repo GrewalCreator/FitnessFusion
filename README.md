@@ -55,3 +55,12 @@ Information Regarding the input parameters and expected output can be found [her
 
 #### /login
 This endpoint is used to verify the users login credentials. Using addMembers, the password was hashed and stored in the database as binary data. /login will check against the hashed password to verify the correct password. Information Regarding the input parameters and expected output can be found [here](https://www.postman.com/telecoms-saganist-9479667/workspace/postconnect/request/19276775-2552fd9d-063d-43f8-9704-6e557e8c4a3f?tab=body) or using the link above
+
+#### /updateEmail
+This endpoint allows the user to update their email linked to their account. Checks are run to ensure the email is not already in use as the email should be unique to the account.
+
+#### /updatePassword
+This endpoint allows the user to update their password to their account. User must provide the unique email linked to their account, the original password and the new password they would like to set.
+
+#### /getAllMembers
+This is an endpoint designed to retrive all members from the database. All information such as name, email, gender and dates will be returned, excluding password.
