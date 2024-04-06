@@ -1,49 +1,54 @@
-// ProfilePage.js
 import React, { useState } from 'react';
 
-const ProfilePage = () => {
-  const [name, setName] = useState('');
+function ProfilePage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+    try {
+      const response = await fetch('/updatePassword', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, oldPassword, newPassword }),
+      });
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update password');
+      }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // You can implement the logic to update account settings here
-    console.log('Updated Account Settings:', { name, email, password });
+      const data = await response.json();
+      setMessage(data.message);
+      setEmail('');
+      setOldPassword('');
+      setNewPassword('');
+    } catch (error) {
+      setMessage('Failed to update password');
+      console.error('Error updating password:', error.message);
+    }
   };
 
   return (
     <div>
       <h1>Profile Page</h1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-          <input type="text" value={name} onChange={handleNameChange} />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={handleEmailChange} />
-        </div>
-        <div>
-          <label>New Password:</label>
-          <input type="password" value={password} onChange={handlePasswordChange} />
-        </div>
-        <button type="submit">Update</button>
+        <label htmlFor="email">Email:</label>
+        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required /><br /><br />
+        <label htmlFor="oldPassword">Old Password:</label>
+        <input type="password" id="oldPassword" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required /><br /><br />
+        <label htmlFor="newPassword">New Password:</label>
+        <input type="password" id="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required /><br /><br />
+        <button type="submit">Update Password</button>
       </form>
+      <div id="message">{message}</div>
     </div>
   );
-};
+}
 
 export default ProfilePage;
