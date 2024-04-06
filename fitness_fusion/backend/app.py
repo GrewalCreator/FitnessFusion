@@ -5,6 +5,7 @@ import psycopg2
 from psycopg2.errors import UndefinedTable
 from dotenv import load_dotenv
 from yaml import safe_load as yload
+from psycopg2.errors import UndefinedTable
 
 from security import Cryptography
 from custom_errors import *
@@ -348,6 +349,7 @@ def updatePassword():
             return jsonify({"error": str(e)}), 500
 
 
+
 # Get All Members
 @app.route("/getAllMembers", methods=['GET'])
 def getAllStudents():
@@ -372,3 +374,4 @@ def getAllStudents():
 # Get Members Fitness Stats
 
 # Get Members Health Stats
+

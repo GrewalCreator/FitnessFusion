@@ -1,49 +1,52 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
-import '../App.css';
 
-function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+const LoginForm = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
   const handleChange = (e) => {
-    if (e.target.name === 'email') {
-      setEmail(e.target.value);
-    } else if (e.target.name === 'password') {
-      setPassword(e.target.value);
-    }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulating successful login
-    // You can replace this with actual login logic
-    if (email === 'example@example.com' && password === 'password') {
-      // Redirect to profile page upon successful login
-      navigate('/profile'); // Use navigate function to redirect
-    } else {
-      // Handle unsuccessful login
-      console.log('Login failed');
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+      console.log(data);
+      
+      // Check if login was successful
+      if (response.ok) {
+        // Redirect to /profile
+        window.location.href = '/profile';
+      } else {
+        // Handle unsuccessful login
+        // For example, display an error message
+        console.error('Login unsuccessful:', data.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error
     }
   };
+  
 
   return (
-    <div className="form-container">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email:</label>
-          <input type="email" name="email" value={email} onChange={handleChange} />
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input type="password" name="password" value={password} onChange={handleChange} />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+      <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+      <button type="submit">Login</button>
+    </form>
   );
-}
+};
 
 export default LoginForm;
