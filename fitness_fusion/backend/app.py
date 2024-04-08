@@ -12,13 +12,13 @@ from custom_errors import *
 import re
 from flask_bcrypt import Bcrypt
 
+import threading
+import time
+import sys
+
+security = None
 
 
-<<<<<<< Updated upstream
-app = Flask(__name__)
-bcrypt = Bcrypt(app)
-security = Cryptography(bcrypt)
-=======
 def billing_simulator():
     
     while True:
@@ -51,7 +51,6 @@ def create_app():
     return app
 
 app = create_app()
->>>>>>> Stashed changes
 
 # Ensure The Following Section is generated prior to load_dotenv()
 config = configparser.ConfigParser()
@@ -116,44 +115,8 @@ def purge():
 
 @app.route("/login", methods=['POST'])
 def login():
-<<<<<<< Updated upstream
-    loginFields = ['email', 'password']
-    with psycopg2.connect(url) as connection:
-        try:
-            data = request.json
-            if any(field not in data for field in loginFields):
-                raise MISSING_ENTRY
-            
-            with open("queries.yaml") as file_object:
-                parsed_yaml = yload(file_object)
-                sql_email_search = parsed_yaml["sql"]["searchByEmail"]
-
-            
-            with connection.cursor() as cursor:
-                cursor.execute(sql_email_search, (data['email'],))
-                if cursor.rowcount == 0:
-                    raise EMAIL_NOT_FOUND
-                
-                columns = [desc[0] for desc in cursor.description]
-                row = cursor.fetchone()
-                password_index = columns.index('password')
-                stored_password = row[password_index]
-                if security.verify_password(data['password'], stored_password) == True:
-                    connection.commit()
-                    return jsonify({"message": "Member Logged-In Successfully"}), 200
-                else:
-                    raise INVALID_PASSWORD
-
-        except Error as e:
-            return jsonify({'error': e.to_dict()}), e.code
-        
-        except Exception as e:
-            connection.rollback()
-            return jsonify({"error": str(e)}), 500
-=======
     data = request.json
     return verifyAccount(data)
->>>>>>> Stashed changes
 
 #######################################################################################################################
     
@@ -162,10 +125,7 @@ def addClient(member_id):
     with psycopg2.connect(url) as connection:
         try:
 
-            with open("queries.yaml") as file_object:
-                parsed_yaml = yload(file_object)
-                sql_client_insert = parsed_yaml["sql"]["addClient"]
-
+            sql_client_insert = get_query("addClient")
 
             
             with connection.cursor() as cursor:
@@ -188,12 +148,11 @@ def addClient(member_id):
 
 @app.route("/addMember", methods=['POST'])
 def addMember():
-    registerFields = ['first_name', 'last_name', 'email', 'password', 'date_of_birth', 'gender', 'member_type']
+    requiredFields = ['first_name', 'last_name', 'email', 'password', 'date_of_birth', 'gender', 'member_type']
     with psycopg2.connect(url) as connection:
         try:
             data = request.json
-            if any(field not in data for field in registerFields):
-                raise MISSING_ENTRY
+            verifyBody(data, requiredFields)
                 
 
             hashed_pswd = security.hash_password(data['password'])
@@ -209,18 +168,17 @@ def addMember():
             if member_type == None:
                 raise INVALID_MEMBER_TYPE
         
-            with open("queries.yaml") as file_object:
-                parsed_yaml = yload(file_object)
-                sql_member_insert = parsed_yaml["sql"]["addMember"]
-                
+
+            sql_member_insert = get_query("addMember")
             
             
             with connection.cursor() as cursor:
                 cursor.execute(sql_member_insert, (data['first_name'], data['last_name'], data['email'], hashed_pswd, data['date_of_birth'], gender_char, data['member_type']))
                 connection.commit()
-                member_id = cursor.fetchone()[0]
+                
                 if cursor.rowcount == 0:
                     raise EMAIL_UNAVAILABLE
+                member_id = cursor.fetchone()[0]
 
                 
                 if member_type == "Client":
@@ -245,8 +203,6 @@ def addMember():
             connection.rollback()
             return jsonify({"error": str(e)}), 500
     
-<<<<<<< Updated upstream
-=======
 #######################################################################################################################
 
 @app.route("/updateEmail", methods=['PUT'])
@@ -473,7 +429,6 @@ def getAll(userType:str):
         return jsonify({'error': error_message}), 500
     
 
->>>>>>> Stashed changes
 ####################################################
 
 def convert_gender(val: str):
@@ -508,13 +463,8 @@ def convert_member_type(member_type: str):
 
     return members.get(member_type)
 
-#######################################################################################################################
+####################################################
 
-<<<<<<< Updated upstream
-@app.route("/updateEmail", methods=['PUT'])
-def updateEmail():
-    updateEmailFields = ['oldEmail', 'newEmail']
-=======
 def get_query(queryName: str):
     with open("queries.yaml") as file_object:
         parsed_yaml = yload(file_object)
@@ -538,85 +488,38 @@ def verifyBody(data: dict, requirements: list):
 
 def searchByName(data:dict, query:str):
     requirements = ["name"]
->>>>>>> Stashed changes
     with psycopg2.connect(url) as connection:
         try:
-            data = request.json
-            if any(field not in data for field in updateEmailFields):
-                raise MISSING_ENTRY
             
-            if data['newEmail'] == data['oldEmail']:
-                raise BAD_INPUT
-            
-            if not validate_email(data['newEmail']):
-                raise INVALID_EMAIL
+            verifyBody(data, requirements)
 
-            with open("queries.yaml") as file_object:
-                parsed_yaml = yload(file_object)
-                sql_email_search = parsed_yaml["sql"]["searchByEmail"]
-                sql_email_update = parsed_yaml["sql"]["updateEmail"]
-                
-            
-            
+            sql_query = get_query(query)
+
             with connection.cursor() as cursor:
-                cursor.execute(sql_email_search, (data['oldEmail'],))
-                old_email_row = cursor.fetchone()
+                fullName = data['name'].lower().split(" ")
+                if len(fullName) == 2:
+                    firstName = fullName[0]
+                    lastName = fullName[1]
+                    cursor.execute(sql_query, (firstName, lastName,))
+                else:
+                    cursor.execute(sql_query, (fullName[0], fullName[0]))
 
-<<<<<<< Updated upstream
-                if old_email_row is None:
-                    raise EMAIL_NOT_FOUND
-=======
                 data = cursor.fetchall()
                 return jsonify(data), 200
->>>>>>> Stashed changes
 
-                
-                cursor.execute(sql_email_search, (data['newEmail'],))
-                new_email_row = cursor.fetchone()
-                if new_email_row is not None:
-                    raise EMAIL_UNAVAILABLE
-
-                
-                cursor.execute(sql_email_update, (data['newEmail'], data['oldEmail']))
-                connection.commit()
-
-                
-                
-                return jsonify({"message": "Email changed successfully"}), 201
-                
         except Error as e:
             return jsonify({'error': e.to_dict()}), e.code
-        
+
+
         except UndefinedTable as e:
             error_message = "Error: Tables do not exist in the database."
             return jsonify({'error': error_message}), 500
-        
+
         except Exception as e:
             connection.rollback()
             return jsonify({"error": str(e)}), 500
 
 
-<<<<<<< Updated upstream
-
-
-@app.route("/updatePassword", methods=['PUT'])
-def updatePassword():
-    updatePasswordFields = ['email', 'oldPassword', 'newPassword']
-    with psycopg2.connect(url) as connection:
-        try:
-            data = request.json
-            if any(field not in data for field in updatePasswordFields):
-                raise MISSING_ENTRY
-            
-            if data['newPassword'] == data['oldPassword']:
-                raise BAD_INPUT
-
-            with open("queries.yaml") as file_object:
-                parsed_yaml = yload(file_object)
-                sql_email_search = parsed_yaml["sql"]["searchByEmail"]
-                sql_password_update = parsed_yaml["sql"]["updatePassword"]
-                
-=======
 def verifyAccount(data:dict):
     
     requiredFields = ['email', 'password']
@@ -625,31 +528,10 @@ def verifyAccount(data:dict):
             data = request.json
             verifyBody(data, requiredFields)
             sql_email_search = get_query("getMemberPasswordByEmail")
->>>>>>> Stashed changes
             
             
             with connection.cursor() as cursor:
                 cursor.execute(sql_email_search, (data['email'],))
-<<<<<<< Updated upstream
-                email_row = cursor.fetchone()
-
-                if email_row is None:
-                    raise EMAIL_NOT_FOUND
-                
-                columns = [desc[0] for desc in cursor.description]
-                
-                hashed_password = security.hash_password(data['newPassword'])
-
-                password_index = columns.index('password')
-                stored_password = email_row[password_index]
-                if security.verify_password(data['oldPassword'], stored_password) == True:
-                    cursor.execute(sql_password_update, (hashed_password, data['email']))
-                    connection.commit()
-                    return jsonify({"message": "Password changed successfully"}), 201
-                else:
-                    raise INVALID_PASSWORD
-                
-=======
                 if cursor.rowcount == 0:
                     raise EMAIL_NOT_FOUND
                 
@@ -659,54 +541,18 @@ def verifyAccount(data:dict):
                 stored_password = row[password_index]
                 if security.verify_password(data['password'], stored_password) == True:
                     connection.commit()
-                    return jsonify({"message": "Member Logged-In Successfully"}), 200
+                    return jsonify({"message": "Member Verified Successfully"}), 200
                 else:
                     raise INVALID_PASSWORD
 
->>>>>>> Stashed changes
         except Error as e:
             return jsonify({'error': e.to_dict()}), e.code
         
         except UndefinedTable as e:
             error_message = "Error: Tables do not exist in the database."
             return jsonify({'error': error_message}), 500
-<<<<<<< Updated upstream
-    
-        except Exception as e:
-            connection.rollback()
-            return jsonify({"error": str(e)}), 500
-
-
-
-# Get All Members
-@app.route("/getAllMembers", methods=['GET'])
-def getAllStudents():
-    try:
-        with psycopg2.connect(url) as connection:
-            with connection.cursor() as cursor:
-                with open("queries.yaml") as file_object:
-                    parsed_yaml = yload(file_object)
-                    cursor.execute(parsed_yaml["sql"]["getAllMembers"])
-                    data = cursor.fetchall()
-                    return jsonify(data), 200;
-    except UndefinedTable as e:
-        error_message = "Error: Tables do not exist in the database."
-        return jsonify({'error': error_message}), 500
-
-# Get All Clients
-
-# Get Members By Name
-
-# Get Members Goals
-
-# Get Members Fitness Stats
-
-# Get Members Health Stats
-
-=======
         
         except Exception as e:
             connection.rollback()
             return jsonify({"error": str(e)}), 500
    
->>>>>>> Stashed changes
