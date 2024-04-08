@@ -5,7 +5,6 @@ import psycopg2
 from psycopg2.errors import UndefinedTable
 from dotenv import load_dotenv
 from yaml import safe_load as yload
-from psycopg2.errors import UndefinedTable
 
 from security import Cryptography
 from custom_errors import *
@@ -196,7 +195,8 @@ def addMember():
             return jsonify({'error': e.to_dict()}), e.code
         
         except UndefinedTable as e:
-            error_message = "Error: Tables do not exist in the database."
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
             return jsonify({'error': error_message}), 500
         
         except Exception as e:
@@ -248,7 +248,8 @@ def updateEmail():
             return jsonify({'error': e.to_dict()}), e.code
         
         except UndefinedTable as e:
-            error_message = "Error: Tables do not exist in the database."
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
             return jsonify({'error': error_message}), 500
         
         except Exception as e:
@@ -287,7 +288,8 @@ def updatePassword():
             return jsonify({'error': e.to_dict()}), e.code
         
         except UndefinedTable as e:
-            error_message = "Error: Tables do not exist in the database."
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
             return jsonify({'error': error_message}), 500
     
         except Exception as e:
@@ -329,7 +331,8 @@ def payAccountBalance():
             return jsonify({'error': e.to_dict()}), e.code
             
         except UndefinedTable as e:
-            error_message = "Error: Tables do not exist in the database."
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
             return jsonify({'error': error_message}), 500
         
         except Exception as e:
@@ -393,7 +396,8 @@ def deleteMemberAccount():
             return jsonify({'error': e.to_dict()}), e.code
             
         except UndefinedTable as e:
-            error_message = "Error: Tables do not exist in the database."
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
             return jsonify({'error': error_message}), 500
         
         except Exception as e:
@@ -425,7 +429,8 @@ def getAll(userType:str):
                 data = cursor.fetchall()
                 return jsonify(data), 200
     except UndefinedTable as e:
-        error_message = "Error: Tables do not exist in the database."
+        error_message = "Error: Tables do not exist in the database. Reload The Page"
+        setup_db()
         return jsonify({'error': error_message}), 500
     
 
@@ -512,7 +517,8 @@ def searchByName(data:dict, query:str):
 
 
         except UndefinedTable as e:
-            error_message = "Error: Tables do not exist in the database."
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
             return jsonify({'error': error_message}), 500
 
         except Exception as e:
@@ -549,7 +555,8 @@ def verifyAccount(data:dict):
             return jsonify({'error': e.to_dict()}), e.code
         
         except UndefinedTable as e:
-            error_message = "Error: Tables do not exist in the database."
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
             return jsonify({'error': error_message}), 500
         
         except Exception as e:

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 function ProfilePage() {
   const [email, setEmail] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
+  const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
 
@@ -15,7 +15,7 @@ function ProfilePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, oldPassword, newPassword }),
+        body: JSON.stringify({ email, password, newPassword }),
       });
 
       if (!response.ok) {
@@ -26,7 +26,7 @@ function ProfilePage() {
       const data = await response.json();
       setMessage(data.message);
       setEmail('');
-      setOldPassword('');
+      setPassword('');
       setNewPassword('');
     } catch (error) {
       setMessage('Failed to update password');
@@ -40,8 +40,8 @@ function ProfilePage() {
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
         <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required /><br /><br />
-        <label htmlFor="oldPassword">Old Password:</label>
-        <input type="password" id="oldPassword" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required /><br /><br />
+        <label htmlFor="password">Old Password:</label>
+        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required /><br /><br />
         <label htmlFor="newPassword">New Password:</label>
         <input type="password" id="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required /><br /><br />
         <button type="submit">Update Password</button>
