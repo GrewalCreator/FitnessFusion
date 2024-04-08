@@ -1,43 +1,43 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LandingPage from './templates/LandingPage';
-import ProfilePage from './templates/ProfilePage';
+import React, {useContext} from 'react';
+import { AuthContext, AuthProvider } from './AuthContext';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate} from 'react-router-dom';
+import LandingPage from './Pages/LandingPage';
+import LoginPage from './Pages/LoginPage';
+import HomePage from './Pages/HomePage';
+import RegistrationPage from './Pages/RegistrationPage';
+
+// Must be logged in to access these routes. Otherwise directed to login
+function PrivateRoute() {
+  const { isLoggedIn } = useContext(AuthContext);
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
+}
+
+// If not logged in, go to '/', otherwise allow to pass (if logged in)
+function AnonymousRoute({ isLoggedIn }) {
+  return isLoggedIn ? <Navigate to="/" replace /> : <Outlet />;
+}
 
 function App() {
-  const handleSetup = async () => {
-    try {
-      const response = await fetch('/setup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        // You can include any data you want to send in the body
-        body: JSON.stringify({ /* data */ })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to setup');
-      }
-
-      // Handle successful setup
-    } catch (error) {
-      console.error('Error setting up:', error.message);
-    }
-  };
-
-  // Call handleSetup when App component mounts
-  React.useEffect(() => {
-    handleSetup();
-  }, []);
-
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-      </Routes>
-    </Router>
+    <React.StrictMode>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route element={<PrivateRoute />}>
+              <Route path="/home" element={<HomePage />} />
+            </Route>
+
+            <Route element={<AnonymousRoute />}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegistrationPage />} />
+            </Route>
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </React.StrictMode>
   );
 }
+
 
 export default App;
