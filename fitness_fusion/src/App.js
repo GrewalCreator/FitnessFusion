@@ -6,6 +6,8 @@ import LoginPage from './Pages/LoginPage';
 import HomePage from './Pages/HomePage';
 import RegistrationPage from './Pages/RegistrationPage';
 
+import ProfilePage from './Pages/ProfilePage';
+
 // Must be logged in to access these routes. Otherwise directed to login
 function PrivateRoute() {
   const { isLoggedIn } = useContext(AuthContext);
@@ -23,8 +25,10 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            
             <Route element={<PrivateRoute />}>
               <Route path="/home" element={<HomePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Route>
 
             <Route element={<AnonymousRoute />}>
@@ -32,6 +36,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegistrationPage />} />
             </Route>
+
           </Routes>
         </Router>
       </AuthProvider>

@@ -1,67 +1,81 @@
 sql:
-  addMember: >
+    addMember: >
                 INSERT INTO Members (FirstName, LastName, Email, Password, DOB, Gender, MemberType)
                 VALUES (LOWER(%s), LOWER(%s), LOWER(%s), %s, %s, %s, %s) 
                 ON CONFLICT (Email) 
                 DO NOTHING RETURNING MemberID;
-  
-  addClient: INSERT INTO Clients (MemberID) VALUES (%s) ON CONFLICT (MemberID) DO NOTHING;
-  
-  searchMembersByEmail: SELECT FirstName, LastName, Email, Gender FROM Members WHERE Email = %s;
 
-  searchClientsByEmail: SELECT FirstName, LastName, Email, Gender
-                        FROM (
-                            SELECT m.FirstName, m.LastName, m.Email, m.Gender
-                            FROM Members m
-                            JOIN Clients c ON m.MemberID = c.MemberID
-                        ) AS subquery
-                        WHERE Email = %s
+    addClient: INSERT INTO Clients (MemberID) VALUES (%s) ON CONFLICT (MemberID) DO NOTHING;
 
-  getMemberPasswordByEmail: SELECT Password FROM Members WHERE Email = %s
+    searchMembersByEmail: SELECT FirstName, LastName, Email, Gender FROM Members WHERE Email = %s;
 
-  searchMembersByName: >
-                  SELECT FirstName, LastName, Email, Gender FROM Members WHERE FirstName LIKE %s OR LastName LIKE %s
+    searchClientsByEmail:  >
+                            SELECT FirstName, LastName, Email, Gender
+                            FROM (
+                                SELECT m.FirstName, m.LastName, m.Email, m.Gender
+                                FROM Members m
+                                JOIN Clients c ON m.MemberID = c.MemberID
+                            ) AS subquery
+                            WHERE Email = %s
 
-  searchClientsByName: >
-                  SELECT FirstName, LastName, Email, Gender
-                  FROM (
-                      SELECT m.FirstName, m.LastName, m.Email, m.Gender
-                      FROM Members m
-                      JOIN Clients c ON m.MemberID = c.MemberID
-                  ) AS subquery
-                  WHERE FirstName LIKE %s OR LastName LIKE %s;
+    getMemberPasswordByEmail: SELECT Password FROM Members WHERE Email = %s
 
+    searchMembersByName: >
+                SELECT FirstName, LastName, Email, Gender FROM Members WHERE FirstName LIKE %s OR LastName LIKE %s
 
-  updateEmail: UPDATE Members SET Email = %s WHERE Email = %s;
-
-  getAllMembers: >
-                  SELECT FirstName, LastName, Email, MemberType 
-                  FROM Members;
-
-  updatePassword: UPDATE Members SET Password = %s WHERE Email = %s;
+    searchClientsByName: >
+                SELECT FirstName, LastName, Email, Gender
+                FROM (
+                    SELECT m.FirstName, m.LastName, m.Email, m.Gender
+                    FROM Members m
+                    JOIN Clients c ON m.MemberID = c.MemberID
+                ) AS subquery
+                WHERE FirstName LIKE %s OR LastName LIKE %s;
 
 
-  getAllClients: >
-                  SELECT m.FirstName, m.LastName, m.Email, m.Gender
-                  FROM Members m
-                  JOIN Clients c ON m.MemberID = c.MemberID;
+    updateEmail: UPDATE Members SET Email = %s WHERE Email = %s;
 
-  getClientBalance: >
-                  SELECT m.FirstName, m.LastName, m.Email, c.AccountBalance
-                  FROM Members m
-                  JOIN Clients c ON m.MemberID = c.MemberID;
+    getAllMembers: >
+                SELECT FirstName, LastName, Email, MemberType 
+                FROM Members;
 
-  chargeAllClients: >
-                  UPDATE Clients
-                  SET AccountBalance = AccountBalance + 50;
+    updatePassword: UPDATE Members SET Password = %s WHERE Email = %s;
 
-  payAccountBalance: >
-                  UPDATE Clients 
-                  SET AccountBalance = AccountBalance - %s 
-                  WHERE MemberID = (
-                      SELECT MemberID 
-                      FROM Members 
-                      WHERE Email = %s
-                  );
+    getMemberType: SELECT MemberType FROM Members WHERE Email = %s;
 
-  deleteMember: DELETE FROM Members WHERE Email = %s;
+    getAllClients: >
+                SELECT m.FirstName, m.LastName, m.Email, m.Gender
+                FROM Members m
+                JOIN Clients c ON m.MemberID = c.MemberID;
+
+    getAllClientBalance: >
+                SELECT m.FirstName, m.LastName, m.Email, c.AccountBalance
+                FROM Members m
+                JOIN Clients c ON m.MemberID = c.MemberID;
+
+    getClientBalanceByName: >
+                
+                SELECT FirstName, LastName, Email, AccountBalance
+                FROM (
+                    SELECT m.FirstName, m.LastName, m.Email, c.AccountBalance
+                    FROM Members m
+                    JOIN Clients c ON m.MemberID = c.MemberID
+                ) AS subquery
+                WHERE FirstName LIKE %s OR LastName LIKE %s;
+
+                
+
+    chargeAllClients: >
+                UPDATE Clients
+                SET AccountBalance = AccountBalance + 50;
+
+    payAccountBalance: >
+                UPDATE Clients 
+                SET AccountBalance = AccountBalance - %s 
+                WHERE MemberID = (
+                    SELECT MemberID 
+                    FROM Members 
+                    WHERE Email = %s
+                );
+
+    deleteMember: DELETE FROM Members WHERE Email = %s;
