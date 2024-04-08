@@ -1,10 +1,11 @@
 sql:
-  addMember: INSERT INTO Members (FirstName, LastName, Email, Password, DOB, Gender, MemberType)
-    VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT (Email) DO NOTHING RETURNING MemberID;
+  addMember: >
+                INSERT INTO Members (FirstName, LastName, Email, Password, DOB, Gender, MemberType)
+                VALUES (LOWER(%s), LOWER(%s), LOWER(%s), %s, %s, %s, %s) 
+                ON CONFLICT (Email) 
+                DO NOTHING RETURNING MemberID;
+  
   addClient: INSERT INTO Clients (MemberID) VALUES (%s) ON CONFLICT (MemberID) DO NOTHING;
-<<<<<<< Updated upstream
-  searchByEmail: SELECT * FROM Members WHERE Email = %s;
-=======
   
   searchMembersByEmail: SELECT FirstName, LastName, Email, Gender FROM Members WHERE Email = %s;
 
@@ -31,12 +32,13 @@ sql:
                   WHERE FirstName LIKE %s OR LastName LIKE %s;
 
 
->>>>>>> Stashed changes
   updateEmail: UPDATE Members SET Email = %s WHERE Email = %s;
-  getAllMembers: SELECT MemberID, FirstName, LastName, Email, DOB, Gender, MemberType, JoinDate FROM Members;
+
+  getAllMembers: >
+                  SELECT FirstName, LastName, Email, MemberType 
+                  FROM Members;
+
   updatePassword: UPDATE Members SET Password = %s WHERE Email = %s;
-<<<<<<< Updated upstream
-=======
 
 
   getAllClients: >
@@ -63,4 +65,3 @@ sql:
                   );
 
   deleteMember: DELETE FROM Members WHERE Email = %s;
->>>>>>> Stashed changes

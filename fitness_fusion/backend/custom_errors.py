@@ -23,9 +23,6 @@ MEMBER_ID_NOT_FOUND = Error(404, "Member ID Was Not Found", "MEMBER_ID_NOT_FOUND
 
 EMAIL_NOT_FOUND = Error(404, "Email Not Found", "EMAIL_NOT_FOUND")
 
-<<<<<<< Updated upstream
-BAD_INPUT = Error(400, "Bad Input Found. Check Data Types & Ensure There Are No Self Updating Values", "BAD_INPUT")
-=======
 BAD_INPUT = Error(400, "Bad Input Found. Check Data Types & Ensure There Are No Self Updating Values", "BAD_INPUT")
 
 INVALID_QUERY = Error(500, "Query Does Not Exist", "INVALID_QUERY")
@@ -33,4 +30,3 @@ INVALID_QUERY = Error(500, "Query Does Not Exist", "INVALID_QUERY")
 PAYMENT_FAILED = Error(500, "Payment Failed. Please Try Again Later. If The Issue Is Not Resolved, Contact Technical Support at (123)-456-7890", "PAYMENT_FAILED")
 
 DELETE_FAILED = Error(500, "Failed To Commit Deletion", "DELETE_FAILED")
->>>>>>> Stashed changes
