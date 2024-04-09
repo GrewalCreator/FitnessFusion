@@ -172,7 +172,7 @@ def addMember():
             
             
             with connection.cursor() as cursor:
-                cursor.execute(sql_member_insert, (data['first_name'], data['last_name'], data['email'], hashed_pswd, data['date_of_birth'], gender_char, data['member_type']))
+                cursor.execute(sql_member_insert, (data['first_name'], data['last_name'], data['email'], hashed_pswd, data['date_of_birth'], gender_char, member_type))
                 connection.commit()
                 
                 if cursor.rowcount == 0:
@@ -341,37 +341,6 @@ def payAccountBalance():
 
 #######################################################################################################################
 
-# Get All Members
-@app.route("/getAllMembers", methods=['GET'])
-def getAllMembers():
-    return getAll("member")
-
-
-# Get All Clients
-@app.route("/getAllClients", methods=['GET'])
-def getAllClients():
-    return getAll("client")
-
-# Get Clients By Name
-@app.route("/searchClientsByName", methods=['GET'])
-def searchClients():
-    data = request.json
-    return searchByName(data, "searchClientsByName")
-    
-        
-# Get Members By Name
-@app.route("/searchMembersByName", methods=['GET'])
-def searchMembers():
-    data = request.json
-    return searchByName(data, "searchMembersByName")
-
-
-
-# Get Clients Account Balance
-@app.route("/getClientBalance", methods=['GET'])
-def getClientBalance():
-    return getAll("client-balance")
-
 # Delete Member Account
 @app.route("/deleteMemberAccount", methods=['DELETE'])
 def deleteMemberAccount():
@@ -404,6 +373,70 @@ def deleteMemberAccount():
             connection.rollback()
             return jsonify({"error": str(e)}), 500
             
+#######################################################################################################################
+
+# Get All Members
+@app.route("/getAllMembers", methods=['GET'])
+def getAllMembers():
+    return getAll("member")
+
+
+@app.route("/getMemberType", methods=['GET'])
+def getMemberType():
+    requiredFilds = ['email']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            verifyBody(data, requiredFilds)
+
+            sql_member_type = get_query("getMemberType")
+            with connection.cursor() as cursor:
+                cursor.execute(sql_member_type, (data['email'],))
+                data = cursor.fetchone()
+                if data == None:
+                    raise EMAIL_NOT_FOUND
+                return jsonify(data), 200
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+# Get All Clients
+@app.route("/getAllClients", methods=['GET'])
+def getAllClients():
+    return getAll("client")
+
+# Get Clients By Name
+@app.route("/searchClientsByName", methods=['GET'])
+def searchClients():
+    data = request.json
+    return searchByName(data, "searchClientsByName")
+    
+        
+# Get Members By Name
+@app.route("/searchMembersByName", methods=['GET'])
+def searchMembers():
+    data = request.json
+    return searchByName(data, "searchMembersByName")
+
+
+# Get Clients Account Balance
+@app.route("/getAllClientBalance", methods=['GET'])
+def getAllClientBalance():
+    return getAll("client-all-balance")
+
+@app.route("/getClientBalance", methods=['GET'])
+def getClientBalance():
+    data = request.json
+    return searchByName(data, "getClientBalanceByName")
+
 # Set Clients Goals
 
 # Get Clients Goals
@@ -416,7 +449,7 @@ def deleteMemberAccount():
 
 def getAll(userType:str):
     userType.lower()
-    types  = {"member":"getAllMembers", "client":"getAllClients", "trainer":"getAllTrainers", "admin-staff":"getAllAdminStaff", "client-balance":"getClientBalance"}
+    types  = {"member":"getAllMembers", "client":"getAllClients", "trainer":"getAllTrainers", "admin-staff":"getAllAdminStaff", "client-all-balance":"getAllClientBalance"}
     if userType not in types:
         return 
     try:
@@ -505,9 +538,9 @@ def searchByName(data:dict, query:str):
                 if len(fullName) == 2:
                     firstName = fullName[0]
                     lastName = fullName[1]
-                    cursor.execute(sql_query, (firstName, lastName,))
+                    cursor.execute(sql_query, ('%' + firstName + '%', '%' + lastName + '%',))
                 else:
-                    cursor.execute(sql_query, (fullName[0], fullName[0]))
+                    cursor.execute(sql_query, ('%' + fullName[0] + '%', '%' + fullName[0] + '%'))
 
                 data = cursor.fetchall()
                 return jsonify(data), 200
