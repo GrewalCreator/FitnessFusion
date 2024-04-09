@@ -414,14 +414,14 @@ def getAllClients():
     return getAll("client")
 
 # Get Clients By Name
-@app.route("/searchClientsByName", methods=['GET'])
+@app.route("/searchClientsByName", methods=['POST'])
 def searchClients():
     data = request.json
     return searchByName(data, "searchClientsByName")
     
         
 # Get Members By Name
-@app.route("/searchMembersByName", methods=['GET'])
+@app.route("/searchMembersByName", methods=['POST'])
 def searchMembers():
     data = request.json
     return searchByName(data, "searchMembersByName")
@@ -432,7 +432,7 @@ def searchMembers():
 def getAllClientBalance():
     return getAll("client-all-balance")
 
-@app.route("/getClientBalance", methods=['GET'])
+@app.route("/getClientBalance", methods=['POST'])
 def getClientBalance():
     data = request.json
     return searchByName(data, "getClientBalanceByName")

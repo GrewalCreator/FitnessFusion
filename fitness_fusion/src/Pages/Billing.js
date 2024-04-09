@@ -8,6 +8,8 @@ function Billing() {
   const [allClientBalances, setAllClientBalances] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -34,20 +36,23 @@ function Billing() {
     }
   };
 
+
+
+
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch('/getClientBalance', {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: searchName }),
+        body: JSON.stringify({ "name": searchName }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error);
+        
       }
 
       const responseData = await response.json();
