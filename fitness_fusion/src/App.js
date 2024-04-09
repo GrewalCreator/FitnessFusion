@@ -5,6 +5,9 @@ import LandingPage from './Pages/LandingPage';
 import LoginPage from './Pages/LoginPage';
 import HomePage from './Pages/HomePage';
 import RegistrationPage from './Pages/RegistrationPage';
+import ProfilePage from './Pages/ProfilePage';
+import Billing from './Pages/Billing';
+import Admin from './Pages/Admin';
 
 // Must be logged in to access these routes. Otherwise directed to login
 function PrivateRoute() {
@@ -25,6 +28,9 @@ function App() {
           <Routes>
             <Route element={<PrivateRoute />}>
               <Route path="/home" element={<HomePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/billing" element={<Billing/>} />
+              <Route path="/admin" element={<Admin/>} />
             </Route>
 
             <Route element={<AnonymousRoute />}>
