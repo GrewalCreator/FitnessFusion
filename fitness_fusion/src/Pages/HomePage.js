@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '../Components/AuthContext';
+import Navbar from '../Components/NavBar';
 
 function HomePage() {
     const navigate = useNavigate();
@@ -11,21 +12,12 @@ function HomePage() {
         navigate('/login');
     };
 
-    const handleProfile = () => {
-        navigate('/profile');
-    };
-
-    const handleBilling = () => {
-        navigate('/billing');
-    };
-
     return (
         <div>
+            <Navbar />
             <h1>Welcome to the Home Page</h1>
             <p>This is where you'll gain access to the rest of the app!</p>
             <button onClick={handleLogout}>Logout</button>
-            <button onClick={handleProfile}>Go to Profile</button>
-            <button onClick={handleBilling}>Go to Billing</button>
         </div>
     );
 }

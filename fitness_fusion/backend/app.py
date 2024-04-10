@@ -207,11 +207,14 @@ def addMember():
 
 @app.route("/updateEmail", methods=['PUT'])
 def updateEmail():
-    requiredFields = ['oldEmail', 'newEmail']
+    requiredFields = ['oldEmail', 'newEmail', 'password']
     with psycopg2.connect(url) as connection:
         try:
             data = request.json
             verifyBody(data, requiredFields)
+            json, code = verifyAccount({'email': data['oldEmail'], 'password': data['password']})
+            if not (code >= 200 and code < 300):
+                return json, code
             
             if data['newEmail'] == data['oldEmail']:
                 raise BAD_INPUT
@@ -224,13 +227,6 @@ def updateEmail():
                 
             
             with connection.cursor() as cursor:
-                cursor.execute(sql_email_search, (data['oldEmail'],))
-                old_email_row = cursor.fetchone()
-
-                if old_email_row is None:
-                    raise EMAIL_NOT_FOUND
-
-                
                 cursor.execute(sql_email_search, (data['newEmail'],))
                 new_email_row = cursor.fetchone()
                 if new_email_row is not None:
@@ -564,7 +560,6 @@ def verifyAccount(data:dict):
     requiredFields = ['email', 'password']
     with psycopg2.connect(url) as connection:
         try:
-            data = request.json
             verifyBody(data, requiredFields)
             sql_email_search = get_query("getMemberPasswordByEmail")
             

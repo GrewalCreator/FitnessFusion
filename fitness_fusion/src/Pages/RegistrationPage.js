@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../assets/registrationPage.css'
 
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
@@ -30,45 +31,65 @@ const RegistrationPage = () => {
       });
       const data = await response.json();
       console.log(data);
-      // Check if registration is successful
+      
       if (response.ok) {
-        // Redirect to login page
         navigate('/login');
       } else {
-        // Check other possible responses (switch case)
-        console.error('Registration unsuccessful:', data.error);
+        const errorData = await response.json(); 
+        const errorMessage = errorData.error.message; 
+  
+        
+        alert(`Error: ${errorMessage}`);
       }
     } catch (error) {
-      console.error('Error:', error);
-      // Incase of sudden error, go back to landing page
-      navigate("/")
+      console.error('Failed to Login:', error)
+      alert('Failed to register. Please try again later.');
+      navigate("/");
     }
   };
 
   return (
-    <div>
-      <h2>Registration</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="first_name" placeholder="First Name" value={formData.first_name} onChange={handleChange} required />
-        <input type="text" name="last_name" placeholder="Last Name" value={formData.last_name} onChange={handleChange} required />
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-        <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} required />
-        <select name="gender" value={formData.gender} onChange={handleChange} required>
-          <option value="">Select Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-        <select name="member_type" value={formData.member_type} onChange={handleChange} required>
-          <option value="">Select Member Type</option>
-          <option value="client">Client</option>
-          <option value="trainer">Trainer</option>
-          <option value="admin-staff">Admin-Staff</option>
-        </select>
-        <button type="submit">Register</button>
-      </form>
-    </div>
+    <div class="form-container">
+    <h2 id = "title">Registration</h2>
+    
+    <form class="registration-form" onSubmit={handleSubmit}>
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" name="first_name" value={formData.first_name} onChange={handleChange} required />
+  
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} required />
+  
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+  
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
+  
+      <label for="date_of_birth">Date of Birth:</label>
+      <input type="date" id="date_of_birth" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} required />
+  
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" value={formData.gender} onChange={handleChange} required>
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+  
+      <label for="member_type">Member Type:</label>
+      <select id="member_type" name="member_type" value={formData.member_type} onChange={handleChange} required>
+        <option value="">Select Member Type</option>
+        <option value="client">Client</option>
+        <option value="trainer">Trainer</option>
+        <option value="admin-staff">Admin-Staff</option>
+      </select>
+  
+      <button type="submit">Register</button>
+    </form>
+  </div>
+  
+
+
   );
 };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Admin = () => {
+const AdminPage = () => {
   const [clientBalances, setClientBalances] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,4 +50,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default AdminPage;
