@@ -1,54 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../Components/AuthContext';
+import Navbar from '../Components/NavBar';
+import UpdateEmailPopup from '../Components/UpdateEmail';
+import UpdatePasswordPopup from '../Components/UpdatePassword';
+import DeleteAccountPopup from '../Components/DeleteAccount';
 
-function ProfilePage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState('');
+const ProfilePage = () => {
+  const { email } = useContext(AuthContext);
+  const [showUpdateEmailPopup, setShowUpdateEmailPopup] = useState(false);
+  const [showUpdatePasswordPopup, setShowUpdatePasswordPopup] = useState(false);
+  const [showDeleteAccountPopup, setShowDeleteAccountPopup] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleUpdateEmail = () => {
+    setShowUpdateEmailPopup(true);
+  };
 
-    try {
-      const response = await fetch('/updatePassword', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, newPassword }),
-      });
+  const handleUpdatePassword = () => {
+    setShowUpdatePasswordPopup(true);
+  };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update password');
-      }
-
-      const data = await response.json();
-      setMessage(data.message);
-      setEmail('');
-      setPassword('');
-      setNewPassword('');
-    } catch (error) {
-      setMessage('Failed to update password');
-      console.error('Error updating password:', error.message);
-    }
+  const handleDeleteAccount = () => {
+    setShowDeleteAccountPopup(true);
   };
 
   return (
     <div>
-      <h1>Profile Page</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required /><br /><br />
-        <label htmlFor="password">Old Password:</label>
-        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required /><br /><br />
-        <label htmlFor="newPassword">New Password:</label>
-        <input type="password" id="newPassword" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required /><br /><br />
-        <button type="submit">Update Password</button>
-      </form>
-      <div id="message">{message}</div>
+      <Navbar />
+      <section>
+        <h2>Email:</h2>
+        <p>{email}</p>
+        <button onClick={handleUpdateEmail}>Update Email</button>
+      </section>
+      <section>
+        <h2>Password:</h2>
+        <p>***********</p>
+        <button onClick={handleUpdatePassword}>Update Password</button>
+      </section>
+      <button style={{ backgroundColor: 'red', color: 'white' }} onClick={handleDeleteAccount}>Delete Account</button>
+
+      {showUpdateEmailPopup && <UpdateEmailPopup onClose={() => setShowUpdateEmailPopup(false)} />}
+      {showUpdatePasswordPopup && <UpdatePasswordPopup onClose={() => setShowUpdatePasswordPopup(false)} />}
+      {showDeleteAccountPopup && <DeleteAccountPopup onClose={() => setShowDeleteAccountPopup(false)} />}
     </div>
   );
-}
+};
 
 export default ProfilePage;

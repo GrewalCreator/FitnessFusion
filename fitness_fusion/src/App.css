@@ -1,17 +1,26 @@
+*{
+  background-color: #24292e;
+  color: #dfbbee;
+  
+}
+
 .container {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
   text-align: center;
+  background-color: transparent;
 }
 
 h1 {
   font-size: 2em;
   margin-bottom: 20px;
+  
 }
 
 p {
   font-size: 1.2em;
+  
 }
 
 button {
@@ -23,6 +32,7 @@ button {
   border-radius: 5px;
   margin: 10px;
   cursor: pointer;
+  text-shadow: none;
 }
 
 .form-container {
@@ -32,6 +42,7 @@ button {
   margin-top: 20px;
   max-width: 400px;
   margin: 20px auto;
+  background-color: transparent;
 }
 
 .form-group {

@@ -63,7 +63,12 @@ sql:
                 ) AS subquery
                 WHERE FirstName LIKE %s OR LastName LIKE %s;
 
-                
+
+    getClientBalanceByEmail: >
+                SELECT c.AccountBalance
+                FROM Members m
+                JOIN Clients c ON m.MemberID = c.MemberID
+                WHERE m.Email = %s;
 
     chargeAllClients: >
                 UPDATE Clients

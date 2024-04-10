@@ -1,0 +1,72 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 90vh;
+    background-color: #24292e;
+    margin-top: 2vh;
+  }
+  
+  .login-form {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  #title {
+    margin-bottom: 20px;
+  }
+  
+  .login-form label {
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .login-form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px auto;
+  }
+  
+  .login-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Adjust width for date input */
+  #date_of_birth {
+    width: 93.5%;
+  }
+  
+  /* Change the color of the calendar icon to white */
+  .login-form input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(100%);
+  }
+  
+  .signup {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  .signup span {
+    color: rgb(12, 114, 83);
+    cursor: pointer;
+  }
+  
+  .signup span:hover {
+    text-decoration: underline;
+  }

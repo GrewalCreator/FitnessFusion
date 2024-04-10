@@ -21,7 +21,7 @@ security = None
 def billing_simulator():
     
     while True:
-        time.sleep(30)  # How Often Client Should Be Billed
+        time.sleep(300)  # How Often Client Should Be Billed
         with psycopg2.connect(url) as connection:
             try:
                 with connection.cursor() as cursor:
@@ -61,7 +61,7 @@ os.environ['PASSWORD'] = PASSWORD
 load_dotenv()
 
 url = os.getenv("DATABASE_URL")
-print(url)
+
 if url:
     url = url.replace("$PASSWORD", PASSWORD)
 
@@ -207,11 +207,14 @@ def addMember():
 
 @app.route("/updateEmail", methods=['PUT'])
 def updateEmail():
-    requiredFields = ['oldEmail', 'newEmail']
+    requiredFields = ['oldEmail', 'newEmail', 'password']
     with psycopg2.connect(url) as connection:
         try:
             data = request.json
             verifyBody(data, requiredFields)
+            json, code = verifyAccount({'email': data['oldEmail'], 'password': data['password']})
+            if not (code >= 200 and code < 300):
+                return json, code
             
             if data['newEmail'] == data['oldEmail']:
                 raise BAD_INPUT
@@ -224,13 +227,6 @@ def updateEmail():
                 
             
             with connection.cursor() as cursor:
-                cursor.execute(sql_email_search, (data['oldEmail'],))
-                old_email_row = cursor.fetchone()
-
-                if old_email_row is None:
-                    raise EMAIL_NOT_FOUND
-
-                
                 cursor.execute(sql_email_search, (data['newEmail'],))
                 new_email_row = cursor.fetchone()
                 if new_email_row is not None:
@@ -306,7 +302,7 @@ def payAccountBalance():
         try:
             data = request.json
             verifyBody(data, requiredFields)
-            payment = data['payment']
+            payment = float(data['payment'])
             if not (isinstance(payment, (float, int)) and payment > 0):
                 raise BAD_INPUT
             
@@ -414,14 +410,14 @@ def getAllClients():
     return getAll("client")
 
 # Get Clients By Name
-@app.route("/searchClientsByName", methods=['GET'])
+@app.route("/searchClientsByName", methods=['POST'])
 def searchClients():
     data = request.json
     return searchByName(data, "searchClientsByName")
     
         
 # Get Members By Name
-@app.route("/searchMembersByName", methods=['GET'])
+@app.route("/searchMembersByName", methods=['POST'])
 def searchMembers():
     data = request.json
     return searchByName(data, "searchMembersByName")
@@ -432,10 +428,39 @@ def searchMembers():
 def getAllClientBalance():
     return getAll("client-all-balance")
 
-@app.route("/getClientBalance", methods=['GET'])
+@app.route("/getClientBalanceByName", methods=['POST'])
 def getClientBalance():
     data = request.json
     return searchByName(data, "getClientBalanceByName")
+
+@app.route("/getClientBalanceByEmail", methods=['POST'])
+def getClientBalanceByEmail():
+    data = request.json
+    required_fields = ['email']
+    verifyBody(data, required_fields)
+
+    with psycopg2.connect(url) as connection:
+        try:
+            sql_balance = get_query("getClientBalanceByEmail")
+            with connection.cursor() as cursor:
+                cursor.execute(sql_balance, (data['email'],))
+                if cursor.rowcount == 0:
+                    raise INVALID_EMAIL
+            
+                data = cursor.fetchone()
+                
+                return jsonify(data), 200
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
 
 # Set Clients Goals
 
@@ -564,7 +589,6 @@ def verifyAccount(data:dict):
     requiredFields = ['email', 'password']
     with psycopg2.connect(url) as connection:
         try:
-            data = request.json
             verifyBody(data, requiredFields)
             sql_email_search = get_query("getMemberPasswordByEmail")
             
