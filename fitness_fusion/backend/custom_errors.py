@@ -23,7 +23,7 @@ MEMBER_ID_NOT_FOUND = Error(404, "Member ID Was Not Found", "MEMBER_ID_NOT_FOUND
 
 EMAIL_NOT_FOUND = Error(404, "Email Not Found", "EMAIL_NOT_FOUND")
 
-BAD_INPUT = Error(400, "Bad Input Found. Check Data Types & Ensure There Are No Self Updating Values", "BAD_INPUT")
+BAD_INPUT = Error(400, "Bad Input Found. Check Data Types, Repeating Fields and negative/null Values", "BAD_INPUT")
 
 INVALID_QUERY = Error(500, "Query Does Not Exist", "INVALID_QUERY")
 

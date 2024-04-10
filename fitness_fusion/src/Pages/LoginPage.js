@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../Components/AuthContext'; 
 import '../assets/loginPage.css'
+
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
