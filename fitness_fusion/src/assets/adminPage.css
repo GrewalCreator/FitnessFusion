@@ -1,0 +1,24 @@
+.admin-page {
+    padding: 20px;
+  }
+  
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px;
+  }
+  
+  .rounded-button {
+    background-color: #007bff; 
+    color: #fff; 
+    border: none;
+    border-radius: 10px; 
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .rounded-button:hover {
+    background-color: #0056b3;
+  }
+  

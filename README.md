@@ -30,6 +30,12 @@ What Can Admin-Staff Do?:
 
 ## Features
 
+- Clients can securely register and login
+- User email maintained in cache
+- View and pay account balance
+- Update profile data
+- Delete accounts
+- Admin & Trainers can view list of client details
 - 
 
 

@@ -15,8 +15,9 @@ function HomePage() {
     return (
         <div>
             <Navbar />
-            <h1>Welcome to the Home Page</h1>
-            <p>This is where you'll gain access to the rest of the app!</p>
+            <h1>Welcome to your Fitness Journey!</h1>
+            
+
             <button onClick={handleLogout}>Logout</button>
         </div>
     );

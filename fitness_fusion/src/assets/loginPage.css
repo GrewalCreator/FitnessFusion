@@ -47,12 +47,12 @@
     background-color: #0056b3;
   }
   
-  /* Adjust width for date input */
+  
   #date_of_birth {
     width: 93.5%;
   }
   
-  /* Change the color of the calendar icon to white */
+
   .login-form input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(100%);
   }

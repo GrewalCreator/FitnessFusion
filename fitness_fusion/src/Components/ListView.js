@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import ListItem from './ListItem';
 import '../assets/listView.css';
 
+
 const ListView = ({ endpoint, method, labelMapping }) => { 
   const [searchTerm, setSearchTerm] = useState('');
   const [data, setData] = useState([]);
+
 
   const handleSearch = () => {
     fetchClients(searchTerm);
