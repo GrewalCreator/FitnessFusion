@@ -86,6 +86,7 @@ const RegistrationPage = () => {
   
       <button type="submit">Register</button>
     </form>
+    <p className="login">Have An Account? <span onClick={() => navigate('/login')}>Login!</span></p>
   </div>
   
 

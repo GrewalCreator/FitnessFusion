@@ -9,6 +9,8 @@ import ProfilePage from './Pages/ProfilePage';
 import BillingPage from './Pages/BillingPage';
 import AdminBillingPage from './Pages/AdminBillingPage';
 import TrainerClientPage from './Pages/TrainerClientPage';
+import TrainerPage from './Pages/TrainerPage';
+import AdminPage from './Pages/AdminPage';
 
 // Must be logged in to access these routes. Otherwise directed to login
 function PrivateRoute() {
@@ -32,8 +34,10 @@ function App() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/billing" element={<BillingPage/>} />
-              <Route path="/admin" element={<AdminBillingPage/>} />
-              <Route path="/trainer" element={<TrainerClientPage/>} />
+              <Route path="/admin" element={<AdminPage/>} />
+              <Route path="/adminBillingManagement" element={<AdminBillingPage/>} />
+              <Route path="/trainer" element={<TrainerPage/>} />
+              <Route path="/trainerClientManagement" element={<TrainerClientPage/>} />
             </Route>
 
             <Route element={<AnonymousRoute />}>

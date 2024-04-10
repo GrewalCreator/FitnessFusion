@@ -1,9 +1,15 @@
 import React from 'react';
-import '../assets/listItem.css'
+import '../assets/listItem.css';
 
-const ListItem = ({ data }) => {
+const ListItem = ({ data, onClick }) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <div className="list-item">
+    <div className="list-item" onClick={handleClick}>
       {Object.entries(data).map(([key, value]) => (
         <div key={key} className="list-item-field">
           <span className="list-item-label">{key}:</span>

@@ -56,3 +56,17 @@
 .registration-form input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(100%);
   }
+
+  .login {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  .login span {
+    color: rgb(12, 114, 83);
+    cursor: pointer;
+  }
+  
+  .login span:hover {
+    text-decoration: underline;
+  }

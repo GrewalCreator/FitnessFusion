@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 
 export const AuthContext = createContext();
 
@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem('email')) || null;
   });
 
+
   // Set Variable and remove cache
   const setAuth = (loggedIn, userEmail) => {
     setIsLoggedIn(loggedIn);
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setAuth(false, null);
+    setAuth(false, null, '');
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('email');
   };

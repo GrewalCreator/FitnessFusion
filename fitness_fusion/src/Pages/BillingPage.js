@@ -5,7 +5,7 @@ import Navbar from '../Components/NavBar';
 
 
 const BillingPage = () => {
-  const [paymentAmount, setPaymentAmount] = useState(''); // Initialize paymentAmount as an empty string
+  const [paymentAmount, setPaymentAmount] = useState(''); 
   const [balance, setBalance] = useState(0);
   const [paymentMade, setPaymentMade] = useState(false); 
   const { email } = useContext(AuthContext); 
@@ -21,7 +21,8 @@ const BillingPage = () => {
           body: JSON.stringify({ email })
         });
         const data = await response.json();
-        setBalance(data);
+        const formattedBalance = data.toLocaleString();
+        setBalance(formattedBalance);
       } catch (error) {
         console.error('Error fetching balance:', error);
       }

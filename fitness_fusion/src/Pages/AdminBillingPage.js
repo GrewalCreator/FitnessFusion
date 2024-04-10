@@ -15,7 +15,6 @@ const AdminBillingPage = () => {
     <div className="admin-billing-management">
       <Navbar />
       <h2>Admin Billing Management</h2>
-      {/* Pass the label mapping configuration to the ListView component */}
       <ListView endpoint={"/getClientBalanceByName"} method='POST' labelMapping={labelMapping} />
     </div>
   );
