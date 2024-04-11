@@ -7,10 +7,12 @@ sql:
 
     addClient: INSERT INTO Clients (MemberID) VALUES (%s) ON CONFLICT (MemberID) DO NOTHING;
 
-    searchMembersByEmail: SELECT FirstName, LastName, Email, Gender FROM Members WHERE Email = %s;
+    searchMembersByEmail: SELECT 1 FROM Members WHERE Email = %s;
+
+    searchTrainersByEmail: SELECT 1 FROM Members WHERE Email = %s AND MemberType = 'Trainer';
 
     searchClientsByEmail:  >
-                            SELECT FirstName, LastName, Email, Gender
+                            SELECT 1
                             FROM (
                                 SELECT m.FirstName, m.LastName, m.Email, m.Gender
                                 FROM Members m
@@ -22,6 +24,18 @@ sql:
 
     searchMembersByName: >
                 SELECT FirstName, LastName, Email, Gender FROM Members WHERE FirstName LIKE %s OR LastName LIKE %s
+    
+    searchTrainersByName: >
+                SELECT FirstName, LastName, Email, Gender FROM Members WHERE MemberType = 'Trainer' AND (FirstName LIKE %s OR LastName LIKE %s)
+
+    getAllTrainerSessions: >
+                SELECT StartTime, Duration_Minutes, SessionType, isBooked
+                FROM WorkoutSessions
+                WHERE MemberID = (
+                    SELECT MemberID
+                    FROM Members
+                    WHERE Email = %s
+                )
 
     searchClientsByName: >
                 SELECT FirstName, LastName, Email, Gender
@@ -47,6 +61,11 @@ sql:
                 SELECT m.FirstName, m.LastName, m.Email, m.Gender
                 FROM Members m
                 JOIN Clients c ON m.MemberID = c.MemberID;
+
+    getAllTrainers: >
+                SELECT FirstName, LastName, Email, Gender
+                FROM Members
+                WHERE MemberType = 'Trainer';
 
     getAllClientBalance: >
                 SELECT m.FirstName, m.LastName, m.Email, c.AccountBalance
@@ -84,3 +103,37 @@ sql:
                 );
 
     deleteMember: DELETE FROM Members WHERE Email = %s;
+
+
+    addSession: WITH trainer AS (
+                    SELECT MemberID
+                    FROM Members
+                    WHERE Email = %s
+                )
+                INSERT INTO WorkoutSessions (MemberID, StartTime, Duration_Minutes, isBooked, SessionType)
+                SELECT MemberID, %s, %s, FALSE, %s
+                FROM trainer;
+
+
+    checkTrainerAvailability: >
+            SELECT NOT EXISTS (
+                SELECT 1
+                FROM WorkoutSessions
+                WHERE MemberID = (
+                    SELECT MemberID
+                    FROM Members
+                    WHERE Email = %s
+                )
+                AND NOT (
+                    (StartTime + (Duration_Minutes * interval '1 minute')) <= %s
+                    OR
+                    StartTime >= (%s + (%s * interval '1 minute'))
+                )
+            ) AS is_available;
+
+
+
+                
+
+
+                

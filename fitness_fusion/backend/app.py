@@ -14,6 +14,7 @@ from flask_bcrypt import Bcrypt
 import threading
 import time
 import sys
+from datetime import datetime, timedelta
 
 security = None
 
@@ -31,7 +32,7 @@ def billing_simulator():
             except Exception as e:
                 connection.rollback()
                 return jsonify({"error": str(e)}), 500
-            
+                                 
 
 
 def create_app():
@@ -371,6 +372,108 @@ def deleteMemberAccount():
             
 #######################################################################################################################
 
+@app.route("/addSession", methods=['POST'])
+def addSession():
+    requiredFields = ['email', 'startTime', 'duration', 'sessionType']
+
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            verifyBody(data, requiredFields)
+
+            email = data['email']
+            start_time = data['startTime']
+            duration = data['duration']
+            session_type = data['sessionType']
+
+            start_time_obj = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+
+            sql_find_email = get_query("searchTrainersByEmail")
+            with connection.cursor() as cursor:
+                cursor.execute(sql_find_email, (data['email'],))
+                
+                if cursor.fetchone() is None:
+                    raise EMAIL_NOT_FOUND
+                
+                sql_check_session_availability = get_query("checkTrainerAvailability")
+                cursor.execute(sql_check_session_availability, (email, start_time_obj, start_time_obj, duration))
+                
+                if not cursor.fetchone()[0]:
+                    raise SESSION_UNAVAILABLE
+                
+                sql_add_session = get_query("addSession")
+                cursor.execute(sql_add_session, (email, start_time_obj, duration, session_type,))
+                connection.commit()
+                return jsonify({'message': "Sucessfully Added Session"}), 201
+
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+
+@app.route("/getTrainerSessions", methods=['POST'])
+def getTrainerSessions():
+    requiredFields = ['email']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            verifyBody(data, requiredFields)
+            sql_query = get_query("getAllTrainerSessions")
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query, (data['email'],))
+                
+                if cursor.rowcount == 0:
+                    raise EMAIL_NOT_FOUND
+                
+                data = cursor.fetchall()
+                return jsonify(data), 200
+            
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+@app.route("/bookSession", methods=['POST'])
+def bookTrainer():
+    requiredFields = ['employeeID', 'email', 'startTime']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            verifyBody(data, requiredFields)
+            with connection.cursor() as cursor:
+                cursor.execute(sql_availability, args)
+                data = cursor.fetchone
+                if data is None:
+                    raise SESSION_UNAVAILABLE
+                
+                return jsonify(data), 200
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+#######################################################################################################################
 # Get All Members
 @app.route("/getAllMembers", methods=['GET'])
 def getAllMembers():
@@ -414,14 +517,21 @@ def getAllClients():
 def searchClients():
     data = request.json
     return searchByName(data, "searchClientsByName")
-    
-        
+
+@app.route("/searchTrainersByName", methods=['POST'])
+def searchTrainers():
+    data = request.json
+    return searchByName(data, "searchTrainersByName")
+
 # Get Members By Name
 @app.route("/searchMembersByName", methods=['POST'])
 def searchMembers():
     data = request.json
     return searchByName(data, "searchMembersByName")
 
+@app.route("/getAllTrainers", methods=['GET'])
+def getAllTrainers():
+    return getAll("trainer")
 
 # Get Clients Account Balance
 @app.route("/getAllClientBalance", methods=['GET'])
@@ -563,9 +673,9 @@ def searchByName(data:dict, query:str):
                 if len(fullName) == 2:
                     firstName = fullName[0]
                     lastName = fullName[1]
-                    cursor.execute(sql_query, ('%' + firstName + '%', '%' + lastName + '%',))
+                    cursor.execute(sql_query, (f'%{firstName}%', f'%{lastName}%',))
                 else:
-                    cursor.execute(sql_query, ('%' + fullName[0] + '%', '%' + fullName[0] + '%'))
+                    cursor.execute(sql_query, (f'%{fullName[0]}%', f'%{fullName[0]}%'))
 
                 data = cursor.fetchall()
                 return jsonify(data), 200
