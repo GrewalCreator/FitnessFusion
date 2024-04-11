@@ -30,3 +30,5 @@ INVALID_QUERY = Error(500, "Query Does Not Exist", "INVALID_QUERY")
 PAYMENT_FAILED = Error(500, "Payment Failed. Please Try Again Later. If The Issue Is Not Resolved, Contact Technical Support at (123)-456-7890", "PAYMENT_FAILED")
 
 DELETE_FAILED = Error(500, "Failed To Commit Deletion", "DELETE_FAILED")
+
+SESSION_UNAVAILABLE = Error(409, "Session Is Unavailable", "SESSION_UNAVAILABLE")
