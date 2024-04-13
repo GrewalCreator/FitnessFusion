@@ -17,6 +17,7 @@ import TrainerSchedulePage from './Pages/TrainerSchedulePage';
 import AdminGroupSchedulePage from './Pages/AdminGroupSchedulePage';
 import NotFoundPage from './Pages/404NotFound';
 import GroupSessionBookingPage from './Pages/GroupSessionBookingPage';
+import PersonalSessionBookingPage from './Pages/PersonalSessionBooking';
 
 // Must be logged in to access these routes. Otherwise directed to login. Must also be the appropriate role
 function PrivateRoute({ allowedRoles }) {
@@ -51,6 +52,7 @@ function App() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/groupSessionBooking" element={<GroupSessionBookingPage />} />
+              <Route path="/personalSessionBooking" element={<PersonalSessionBookingPage />} />
             </Route>
 
             {/* Client */}

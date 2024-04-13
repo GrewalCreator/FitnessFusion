@@ -4,7 +4,7 @@ import ListItem from '../Components/ListItem';
 import '../assets/groupSession.css'
 import { AuthContext } from '../Components/AuthContext';
 
-const GroupSessionBookingPage = () => {
+const PersonalSessionBookingPage = () => {
 
   const [data, setData] = useState([]);
   const { email } = useContext(AuthContext);
@@ -25,7 +25,7 @@ const GroupSessionBookingPage = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ type: 'group', email: email })
+        body: JSON.stringify({ type: 'private', email: email })
       });
 
       if (response.ok) {
@@ -37,7 +37,7 @@ const GroupSessionBookingPage = () => {
         alert(`Error: ${errorMessage}`);
       }
     } catch (error) {
-      console.error('Failed to Fetch Group Session Data:', error)
+      console.error('Failed to Fetch Persona Session Data:', error)
     }
   }, [email]);
 
@@ -64,7 +64,7 @@ const GroupSessionBookingPage = () => {
         alert(`Error: ${errorMessage}`);
       }
     } catch (error) {
-      console.error('Failed to Book Group Session:', error)
+      console.error('Failed to Book Personal Session:', error)
     }
   };
  
@@ -72,7 +72,7 @@ const GroupSessionBookingPage = () => {
     <div>
         <Navbar/>
         <div className='group-container'>
-            <h1>Group Session Booking Page</h1>
+            <h1>Personal Session Booking Page</h1>
             <div>
                   {data.map((item, index) => (
                       <div key={index} className="list-session-container">
@@ -88,4 +88,4 @@ const GroupSessionBookingPage = () => {
   );
 };
 
-export default GroupSessionBookingPage;
+export default PersonalSessionBookingPage;

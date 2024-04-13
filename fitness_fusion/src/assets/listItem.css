@@ -16,7 +16,7 @@
 }
 
 .list-item-field {
-  margin-right: 20px; /* Increase the margin to create more space between label and value */
+  margin-right: 20px; 
   font-family: Arial, sans-serif;
   font-size: 16px;
 }
@@ -27,5 +27,5 @@
 
 .list-item-value {
   font-style: italic;
-  margin-right: 40px; /* Decrease the margin to keep label and value closer */
+  margin-right: 40px; 
 }

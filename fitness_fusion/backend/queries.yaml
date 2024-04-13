@@ -252,7 +252,7 @@ sql:
 
             COMMIT;
 
-    getAllGroupSessions: >
+    getAllSessions: >
             SELECT
                 ws.SessionID,
                 CONCAT(m.FirstName, ' ', m.LastName) AS FullName,
@@ -267,6 +267,8 @@ sql:
             LEFT JOIN
                 Clients c ON ws.SessionID = ANY(c.SessionIDs)
             WHERE
-                ws.SessionType = 'group'
+                ws.SessionType = %s
                 AND ws.isBooked = FALSE
                 AND NOT ws.SessionID = ANY (SELECT unnest(SessionIDs) FROM Clients WHERE MemberID = %s);
+
+

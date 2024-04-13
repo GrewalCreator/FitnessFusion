@@ -618,9 +618,9 @@ def getTrainerSessions():
             return jsonify({"error": str(e)}), 500
 
 
-@app.route("/getAllGroupSessions", methods=['POST'])
-def getAllGroupSessions():
-    requiredFields =['email']
+@app.route("/getAllSessions", methods=['POST'])
+def getAllSessions():
+    requiredFields =['email', 'type']
     with psycopg2.connect(url) as connection:
         try:
             data = request.json
@@ -637,8 +637,8 @@ def getAllGroupSessions():
                     raise EMAIL_NOT_FOUND
                 
                 
-                sql_query = get_query('getAllGroupSessions')
-                cursor.execute(sql_query, (memberID,))
+                sql_query = get_query('getAllSessions')
+                cursor.execute(sql_query, (data['type'], memberID,))
 
                 data = cursor.fetchall()
 

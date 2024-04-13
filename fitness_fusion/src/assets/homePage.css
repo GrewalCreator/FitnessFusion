@@ -1,9 +1,9 @@
-.icon-container {
+.image-container {
     display: flex;
     justify-content: space-around;
 }
 
-.icon {
+.image {
     position: relative;
     background-color: #e0e0e0;
     background-size: cover;
@@ -15,7 +15,7 @@
     cursor: pointer;
 }
 
-.icon p {
+.image p {
     position: absolute;
     bottom: 0;
     left: 0;

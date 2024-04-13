@@ -22,24 +22,24 @@ function HomePage() {
             <Navbar />
             <h1>Welcome to your Fitness Journey!</h1>
 
-            <div className="icon-container"> 
+            <div className="image-container"> 
               
-                <div className="icon" id = 'goals' onClick={() => handleIconClick('/goals')}>
+                <div className="image" id = 'goals' onClick={() => handleIconClick('/goals')}>
                     <p>Set Your Goals</p>
                 </div>
 
 
-                <div className="icon" id = 'groupBooking' onClick={() => handleIconClick('/groupSessionBooking')}>
+                <div className="image" id = 'groupBooking' onClick={() => handleIconClick('/groupSessionBooking')}>
                     <p>Book A Class</p>
                 </div>
 
 
-                <div className="icon" id = 'personalBooking' onClick={() => handleIconClick('/personalSessionBooking')}>
+                <div className="image" id = 'personalBooking' onClick={() => handleIconClick('/personalSessionBooking')}>
                     <p>Book A Personal Fitness Session</p>
                 </div>
 
 
-                <div className="icon" id = 'achievements' onClick={() => handleIconClick('/achievements')}>
+                <div className="image" id = 'achievements' onClick={() => handleIconClick('/achievements')}>
                     <p>Track Your Achievments</p>
                 </div>
 
