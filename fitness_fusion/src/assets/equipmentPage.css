@@ -1,0 +1,22 @@
+.list-equipment-container {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    margin-bottom: 20px; 
+  }
+  
+  .list-equipment-container .list-item {
+    flex: 1; 
+  }
+  
+  .list-equipment-container .availability {
+    margin-left: 20px; 
+  }
+  
+  #notAvailable{
+    background-color: rgba(36, 119, 3, 0.527);
+  }
+
+  #isAvailable{
+    background-color: rgb(146, 2, 2);
+  }

@@ -18,6 +18,7 @@ import AdminGroupSchedulePage from './Pages/AdminGroupSchedulePage';
 import NotFoundPage from './Pages/404NotFound';
 import GroupSessionBookingPage from './Pages/GroupSessionBookingPage';
 import PersonalSessionBookingPage from './Pages/PersonalSessionBooking';
+import EquipmentPage from './Pages/EquipmentPage';
 
 // Must be logged in to access these routes. Otherwise directed to login. Must also be the appropriate role
 function PrivateRoute({ allowedRoles }) {
@@ -51,8 +52,6 @@ function App() {
             <Route element={<PrivateRoute allowedRoles={['Client', 'Trainer', 'Admin-Staff']}/>}>
               <Route path="/home" element={<HomePage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/groupSessionBooking" element={<GroupSessionBookingPage />} />
-              <Route path="/personalSessionBooking" element={<PersonalSessionBookingPage />} />
             </Route>
 
             {/* Client */}
@@ -60,6 +59,8 @@ function App() {
               <Route path="/goals" element={<GoalsPage />} />
               <Route path="/achievements" element={<AchievementsPage />} />
               <Route path="/billing" element={<BillingPage />} />
+              <Route path="/groupSessionBooking" element={<GroupSessionBookingPage />} />
+              <Route path="/personalSessionBooking" element={<PersonalSessionBookingPage />} />
             </Route>
 
             {/* Trainer */}
@@ -74,6 +75,7 @@ function App() {
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/groupSchedule" element={<AdminGroupSchedulePage />} />
               <Route path="/adminBillingManagement" element={<AdminBillingPage />} />
+              <Route path="/equipment" element={<EquipmentPage />} />
             </Route>
 
             {/* Anonymous access */}

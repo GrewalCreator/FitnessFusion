@@ -731,11 +731,45 @@ def getMemberType():
             connection.rollback()
             return jsonify({"error": str(e)}), 500
 
+
+
+@app.route("/toggleEquipment", methods=['PUT'])
+def toggle():
+    requiredFilds = ['status', 'id']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            verifyBody(data, requiredFilds)
+
+            sql_query = get_query("toggleEquipment")
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query, (data['status'], data['id'],))
+                
+                return jsonify(data), 200
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+
+
+
+
 # Get All Clients
 @app.route("/getAllClients", methods=['GET'])
 def getAllClients():
     return getAll("client")
 
+@app.route("/getEquipment", methods=['GET'])
+def getAllEquipment():
+    return getAll("equipment")
 
 # Get Clients By Name
 @app.route("/searchClientsByName", methods=['POST'])
@@ -808,7 +842,7 @@ def getClientBalanceByEmail():
 def getAll(userType:str):
     userType.lower()
     types  = {"member":"getAllMembers", "client":"getAllClients", "trainer":"getAllTrainers", "admin-staff":"getAllAdminStaff", 
-              "client-all-balance":"getAllClientBalance", "rooms": "getAllRooms", "group-sessions":"NULL"}
+              "client-all-balance":"getAllClientBalance", "rooms": "getAllRooms", "equipment":"getEquipment"}
     if userType not in types:
         return 
     try:
