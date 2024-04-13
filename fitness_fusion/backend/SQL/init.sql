@@ -13,30 +13,41 @@ CREATE TABLE IF NOT EXISTS Members (
 CREATE TABLE IF NOT EXISTS Clients (
     MemberID INT NOT NULL UNIQUE,
     AccountBalance BIGINT NOT NULL DEFAULT 0,
-    CurrentWeight INT NOT NULL DEFAULT 0,
-    MonthlyAvgSteps INT NOT NULL DEFAULT 0,
-    HighestStepCount INT NOT NULL DEFAULT 0,
-    SessionBookings TIMESTAMP[],
+    SessionIDs INT[] DEFAULT ARRAY[]::INT[],
     FOREIGN KEY (MemberID) REFERENCES Members(MemberID) ON DELETE CASCADE
 );
+
+
 
 CREATE TABLE IF NOT EXISTS Goals (
     GoalID SERIAL PRIMARY KEY,
     MemberID INT NOT NULL,
-    GoalType TEXT NOT NULL UNIQUE,  
+    GoalType TEXT NOT NULL,  
     GoalTarget FLOAT NOT NULL,
-    CurrentValue FLOAT NOT NULL,
-    DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    DateCreated TIMESTAMP(0) DEFAULT LOCALTIMESTAMP,
+    isCompleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (MemberID) REFERENCES Members(MemberID) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Rooms (
+    RoomNumber INT NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS Equipment (
+    EquipmentID SERIAL PRIMARY KEY,
+    EquipmentName TEXT NOT NULL,
+    isAvailable BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS WorkoutSessions (
     SessionID SERIAL PRIMARY KEY,
     MemberID INT NOT NULL,
-    StartTime TIMESTAMP NOT NULL,
+    StartTime TIMESTAMP(0) NOT NULL,
     Duration_Minutes INT NOT NULL DEFAULT 30,
     isBooked BOOLEAN NOT NULL DEFAULT FALSE,
     SessionType TEXT NOT NULL,
+    RoomNumber INT,
+    Participants INT DEFAULT 0,
     FOREIGN KEY (MemberID) REFERENCES Members(MemberID) ON DELETE CASCADE,
     CONSTRAINT unique_member_start_time UNIQUE (MemberID, StartTime)
 );

@@ -1,0 +1,51 @@
+.image-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.image {
+    position: relative;
+    background-color: #e0e0e0;
+    background-size: cover;
+    background-position: center;
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.image p {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 95%;
+    margin: 0;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.5); 
+    color: white;
+    border-bottom-left-radius: 20px; 
+    border-bottom-right-radius: 20px; 
+}
+
+
+#goals {
+    background-image: url('../assets/goals.png'); 
+}
+
+
+#groupBooking {
+    background-image: url('../assets/group.jpeg'); 
+}
+
+#personalBooking {
+    background-image: url('../assets/personal.png'); 
+    background-size: 80%;
+    background-repeat: no-repeat;
+}
+
+#achievements {
+    background-image: url('../assets/achievements.jpg'); 
+    background-size: 83%;
+    background-repeat: no-repeat;
+}

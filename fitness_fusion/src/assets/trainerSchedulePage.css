@@ -1,40 +1,43 @@
-  .form-container {
+  .schedule-container {
       display: flex;
       flex-direction: column;
-      justify-content: flex-start; 
+      justify-content: flex-start;
       align-items: center;
       height: 90vh;
       background-color: #24292e;
-      margin-top: -5vh; 
+      margin-top: 4vh;
     }
   
-  .registration-form {
+  .session-form {
     width: 300px;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
   }
   
-
   #title {
     margin-bottom: 20px;
   }
   
-  .registration-form label {
+  .session-form label {
     margin-bottom: 8px;
     display: block;
   }
   
-  .registration-form input,
-  .registration-form select {
+  .session-form input,
+  .session-form select {
     width: 100%;
     padding: 8px;
     margin-bottom: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
+
+  #duration, #time, #date {
+    width: 93.5%;
+  }
   
-  .registration-form button {
+  .session-form button {
     width: 100%;
     padding: 10px;
     background-color: #007bff;
@@ -45,28 +48,12 @@
     margin: 10px auto;
   }
   
-  .registration-form button:hover {
+  .session-form button:hover {
     background-color: #0056b3;
   }
-  
-  #date_of_birth{
-    width: 93.5%;
-  }
 
-.registration-form input[type="date"]::-webkit-calendar-picker-indicator {
+  
+  .session-form input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(100%);
   }
 
-  .login {
-    margin-top: 20px;
-    font-size: 14px;
-  }
-  
-  .login span {
-    color: rgb(12, 114, 83);
-    cursor: pointer;
-  }
-  
-  .login span:hover {
-    text-decoration: underline;
-  }

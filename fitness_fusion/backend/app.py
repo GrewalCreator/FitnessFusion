@@ -83,9 +83,14 @@ def setup_db():
         try:
             
             with connection.cursor() as cursor:
-                with open("init.sql", "r") as init_file:
+                with open("./SQL/init.sql", "r") as init_file:
                     sql_queries = init_file.read()
                     cursor.execute(sql_queries)
+                
+                with open("./SQL/dummyData.sql", "r") as data_file:
+                    sql_queries = data_file.read()
+                    cursor.execute(sql_queries)
+                    
             return {"message": "Initial Table & Values Generated Successfully"}, 201
 
         except Exception as e:
@@ -99,7 +104,7 @@ def purge():
         try:
             
             with connection.cursor() as cursor:
-                with open("del.sql", "r") as init_file:
+                with open("./SQL/del.sql", "r") as init_file:
                     sql_queries = init_file.read()
                     cursor.execute(sql_queries)
             return {"message": "All Tables & Data Purged Successfully"}, 200
@@ -372,19 +377,173 @@ def deleteMemberAccount():
             
 #######################################################################################################################
 
-@app.route("/addSession", methods=['POST'])
-def addSession():
-    requiredFields = ['email', 'startTime', 'duration', 'sessionType']
+
+@app.route("/completeGoal", methods=['PUT'])
+def completeGoal():
+    requiredFields = ['email', 'type', 'target', 'dateTime']
+    with psycopg2.connect(url) as connection:
+        data = request.json
+        verifyBody(data, requiredFields)
+        try:
+            date_time_obj = datetime.strptime(data['dateTime'], "%Y-%m-%d %H:%M:%S")
+            sql_complete_goal = get_query("completeGoal")
+            with connection.cursor() as cursor:
+                cursor.execute(sql_complete_goal, (data['email'], data['type'], data['target'], date_time_obj))
+                if cursor.rowcount == 0:
+                    raise UPDATE_FAILED
+                
+                connection.commit()
+                return jsonify({"message": "Goal Completed Successfully"}), 200
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+                
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+            
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+@app.route("/deleteGoal", methods=['DELETE'])
+def deleteGoal():
+    requiredFields = ['email', 'type', 'target', 'dateTime']
 
     with psycopg2.connect(url) as connection:
         try:
             data = request.json
             verifyBody(data, requiredFields)
 
-            email = data['email']
+            date_time_obj = datetime.strptime(data['dateTime'], "%Y-%m-%d %H:%M:%S")
+        
+            sql_delete_goal = get_query("deleteGoal")
+            with connection.cursor() as cursor:
+                cursor.execute(sql_delete_goal, (data['email'], data['type'], data['target'], date_time_obj, False))
+                if cursor.rowcount == 0:
+                    raise DELETE_FAILED
+            
+                connection.commit()
+                return jsonify({"message": "Deletion Commited Successfully"}), 200
+
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+
+@app.route("/setGoal", methods=['POST'])
+def setGoal():
+    requiredFields = ['type', 'value', 'email']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            
+            verifyBody(data, requiredFields)
+
+            if float(data['value']) < 0:
+                raise BAD_INPUT
+
+            with connection.cursor() as cursor:
+                sql_client = get_query("searchClientsByEmail")
+                cursor.execute(sql_client, (data['email'],))
+                if cursor.fetchone() is None:
+                    raise EMAIL_NOT_FOUND
+
+                sql_goal = get_query("addGoal")
+                cursor.execute(sql_goal, (data['email'], data['type'], data['value']))
+
+                connection.commit()
+                return jsonify({"message": "Goal Set Successfully"}), 201
+                
+        except Error as e:
+                return jsonify({'error': e.to_dict()}), e.code
+                
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+
+@app.route("/getAchievements", methods=['POST'])
+def getAchievements():
+    requiredFields = ['email']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            
+            verifyBody(data, requiredFields)
+            with connection.cursor() as cursor:
+                sql_achievements = get_query("getAchievements")
+                cursor.execute(sql_achievements, (data['email'],))
+                data = cursor.fetchall()
+                return jsonify(data), 200
+        except Error as e:
+                return jsonify({'error': e.to_dict()}), e.code
+                
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+@app.route("/getGoals", methods=['POST'])
+def getGoals():
+    requiredFields = ['email', 'isCompleted']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            
+            verifyBody(data, requiredFields)
+            with connection.cursor() as cursor:
+                sql_goals = get_query("searchClientsGoalByEmail")
+                cursor.execute(sql_goals, (data['email'], data['isCompleted'],))
+                data = cursor.fetchall()
+                return jsonify(data), 200
+        except Error as e:
+                return jsonify({'error': e.to_dict()}), e.code
+                
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+        
+
+#######################################################################################################################
+
+
+@app.route("/addSession", methods=['POST'])
+def addSession():
+    requiredFields = ['email', 'startTime', 'duration', 'sessionType', 'room']
+
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            verifyBody(data, requiredFields)
+
+            email = data['email'].lower()
             start_time = data['startTime']
             duration = data['duration']
-            session_type = data['sessionType']
+            session_type = data['sessionType'].lower()
+            roomNumber = int(data['room'])
 
             start_time_obj = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
 
@@ -397,12 +556,22 @@ def addSession():
                 
                 sql_check_session_availability = get_query("checkTrainerAvailability")
                 cursor.execute(sql_check_session_availability, (email, start_time_obj, start_time_obj, duration))
-                
+
                 if not cursor.fetchone()[0]:
                     raise SESSION_UNAVAILABLE
                 
+                
+                # Check if room is available
+                sql_check_room_availbility = get_query("checkRoomAvailability")
+                cursor.execute(sql_check_room_availbility, (roomNumber, start_time_obj, start_time_obj, duration))
+                
+                if not cursor.fetchone()[0]:
+                    raise ROOM_UNAVAILABLE
+            
                 sql_add_session = get_query("addSession")
-                cursor.execute(sql_add_session, (email, start_time_obj, duration, session_type,))
+                cursor.execute(sql_add_session, (email, start_time_obj, duration, session_type, roomNumber,))
+             
+
                 connection.commit()
                 return jsonify({'message': "Sucessfully Added Session"}), 201
 
@@ -448,20 +617,75 @@ def getTrainerSessions():
             connection.rollback()
             return jsonify({"error": str(e)}), 500
 
-@app.route("/bookSession", methods=['POST'])
-def bookTrainer():
-    requiredFields = ['employeeID', 'email', 'startTime']
+
+@app.route("/getAllSessions", methods=['POST'])
+def getAllSessions():
+    requiredFields =['email', 'type']
     with psycopg2.connect(url) as connection:
         try:
             data = request.json
             verifyBody(data, requiredFields)
+
             with connection.cursor() as cursor:
-                cursor.execute(sql_availability, args)
-                data = cursor.fetchone
-                if data is None:
+
+                sql_query = get_query('getMemberID')
+                cursor.execute(sql_query, (data['email'],))
+
+                memberID = cursor.fetchone()[0]
+                
+                if memberID is None:
+                    raise EMAIL_NOT_FOUND
+                
+                
+                sql_query = get_query('getAllSessions')
+                cursor.execute(sql_query, (data['type'], memberID,))
+
+                data = cursor.fetchall()
+
+                return jsonify(data), 200
+            
+        except Error as e:
+            return jsonify({'error': e.to_dict()}), e.code
+            
+        except UndefinedTable as e:
+            error_message = "Error: Tables do not exist in the database. Reload The Page"
+            setup_db()
+            return jsonify({'error': error_message}), 500
+        
+        except Exception as e:
+            connection.rollback()
+            return jsonify({"error": str(e)}), 500
+
+@app.route("/bookSession", methods=['POST'])
+def bookTrainer():
+    requiredFields = ['sessionID', 'email']
+    with psycopg2.connect(url) as connection:
+        try:
+            data = request.json
+            verifyBody(data, requiredFields)
+
+            with connection.cursor() as cursor:
+                sql_query = get_query("getSessionID")
+                cursor.execute(sql_query, (data['sessionID'],))
+                sessionID = cursor.fetchone()[0]
+                
+                if sessionID is None:
+                    raise SESSION_NOT_FOUND
+                
+                sql_query = get_query('getMemberID')
+                cursor.execute(sql_query, (data['email'],))
+
+                memberID = cursor.fetchone()[0]
+                
+                if memberID is None:
+                    raise EMAIL_NOT_FOUND
+                
+                sql_query = get_query("bookSession")
+                cursor.execute(sql_query, (sessionID, sessionID, memberID, sessionID, memberID,))
+                if cursor.rowcount == 0:
                     raise SESSION_UNAVAILABLE
                 
-                return jsonify(data), 200
+                return jsonify({'message': 'Session Booked Successfully'}), 201
         except Error as e:
             return jsonify({'error': e.to_dict()}), e.code
             
@@ -480,7 +704,7 @@ def getAllMembers():
     return getAll("member")
 
 
-@app.route("/getMemberType", methods=['GET'])
+@app.route("/getMemberType", methods=['POST'])
 def getMemberType():
     requiredFilds = ['email']
     with psycopg2.connect(url) as connection:
@@ -511,6 +735,7 @@ def getMemberType():
 @app.route("/getAllClients", methods=['GET'])
 def getAllClients():
     return getAll("client")
+
 
 # Get Clients By Name
 @app.route("/searchClientsByName", methods=['POST'])
@@ -543,6 +768,10 @@ def getClientBalance():
     data = request.json
     return searchByName(data, "getClientBalanceByName")
 
+@app.route("/getAllRooms", methods=['GET'])
+def getRooms():
+    return getAll("rooms")
+
 @app.route("/getClientBalanceByEmail", methods=['POST'])
 def getClientBalanceByEmail():
     data = request.json
@@ -572,19 +801,14 @@ def getClientBalanceByEmail():
             connection.rollback()
             return jsonify({"error": str(e)}), 500
 
-# Set Clients Goals
 
-# Get Clients Goals
-
-# Get Clients Fitness Stats
-
-# Get Clients Health Stats
 
 #######################################################################################################################
 
 def getAll(userType:str):
     userType.lower()
-    types  = {"member":"getAllMembers", "client":"getAllClients", "trainer":"getAllTrainers", "admin-staff":"getAllAdminStaff", "client-all-balance":"getAllClientBalance"}
+    types  = {"member":"getAllMembers", "client":"getAllClients", "trainer":"getAllTrainers", "admin-staff":"getAllAdminStaff", 
+              "client-all-balance":"getAllClientBalance", "rooms": "getAllRooms", "group-sessions":"NULL"}
     if userType not in types:
         return 
     try:

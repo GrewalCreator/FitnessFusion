@@ -1,7 +1,7 @@
 import React from 'react';
 import '../assets/listItem.css';
 
-const ListItem = ({ data, onClick }) => {
+const ListItem = ({ data, labelMapping, onClick }) => {
   const handleClick = () => {
     if (onClick) {
       onClick();
@@ -10,10 +10,10 @@ const ListItem = ({ data, onClick }) => {
 
   return (
     <div className="list-item" onClick={handleClick}>
-      {Object.entries(data).map(([key, value]) => (
-        <div key={key} className="list-item-field">
-          <span className="list-item-label">{key}:</span>
-          <span className="list-item-value">{value}</span>
+      {labelMapping.map(({ label, key }) => (
+        <div key={label} className="list-item-field">
+          <span className="list-item-label">{label}:</span>
+          <span className="list-item-value">{data[key]}</span>
         </div>
       ))}
     </div>

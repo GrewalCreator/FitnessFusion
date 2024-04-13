@@ -49,26 +49,26 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div class="form-container">
+    <div className="form-container">
     <h2 id = "title">Registration</h2>
     
-    <form class="registration-form" onSubmit={handleSubmit}>
-      <label for="first_name">First Name:</label>
+    <form className="registration-form" onSubmit={handleSubmit}>
+      <label htmlFor="first_name">First Name:</label>
       <input type="text" id="first_name" name="first_name" value={formData.first_name} onChange={handleChange} required />
   
-      <label for="last_name">Last Name:</label>
+      <label htmlFor="last_name">Last Name:</label>
       <input type="text" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} required />
   
-      <label for="email">Email:</label>
+      <label htmlFor="email">Email:</label>
       <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
   
-      <label for="password">Password:</label>
+      <label htmlFor="password">Password:</label>
       <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
   
-      <label for="date_of_birth">Date of Birth:</label>
+      <label htmlFor="date_of_birth">Date of Birth:</label>
       <input type="date" id="date_of_birth" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} required />
   
-      <label for="gender">Gender:</label>
+      <label htmlFor="gender">Gender:</label>
       <select id="gender" name="gender" value={formData.gender} onChange={handleChange} required>
         <option value="">Select Gender</option>
         <option value="male">Male</option>
@@ -76,7 +76,7 @@ const RegistrationPage = () => {
         <option value="other">Other</option>
       </select>
   
-      <label for="member_type">Member Type:</label>
+      <label htmlFor="member_type">Member Type:</label>
       <select id="member_type" name="member_type" value={formData.member_type} onChange={handleChange} required>
         <option value="">Select Member Type</option>
         <option value="client">Client</option>
