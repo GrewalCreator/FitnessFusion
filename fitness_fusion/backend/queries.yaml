@@ -230,16 +230,31 @@ sql:
 
     bookSession: >
             BEGIN;
-
+                WITH session_info AS (
+                    SELECT
+                        ws.SessionID,
+                        ws.SessionType,
+                        ws.Participants
+                    FROM
+                        WorkoutSessions ws
+                    WHERE
+                        ws.SessionID = %s
+                        AND ws.isBooked = FALSE
+                )
                 UPDATE
                     WorkoutSessions
                 SET
-                    isBooked = TRUE,
-                    Participants = Participants + 1
+                    isBooked = CASE
+                                WHEN s.SessionType = 'private' THEN TRUE
+                                WHEN s.SessionType = 'group' AND s.Participants = 3 THEN TRUE
+                                ELSE FALSE
+                            END,
+                    Participants = WorkoutSessions.Participants + 1
+                FROM
+                    session_info s
                 WHERE
-                    SessionID = %s
-                    AND isBooked = FALSE
-                    AND (SessionType = 'private' OR (SessionType = 'group' AND Participants < 3));
+                    WorkoutSessions.SessionID = s.SessionID
+                    AND WorkoutSessions.isBooked = FALSE;
 
                 UPDATE
                     Clients
@@ -248,9 +263,8 @@ sql:
                 WHERE
                     MemberID = %s
                     AND NOT %s = ANY (SELECT unnest(SessionIDs) FROM Clients WHERE MemberID = %s);
-
-
             COMMIT;
+
 
     getAllSessions: >
             SELECT

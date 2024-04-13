@@ -42,7 +42,22 @@ function AnonymousRoute({ isLoggedIn }) {
   return isLoggedIn ? <Navigate to="/" replace /> : <Outlet />;
 }
 
+function HomeRole() {
+  const { role } = useContext(AuthContext);
+  switch (role) {
+    case 'Client':
+      return <HomePage />;
+    case 'Trainer':
+      return <TrainerPage />;
+    case 'Admin-Staff':
+      return <AdminPage />;
+    default:
+      return <Navigate to="/notFound" replace />;
+  }
+}
+
 function App() {
+
   return (
     <React.StrictMode>
       <AuthProvider>
@@ -50,8 +65,8 @@ function App() {
           <Routes>
 
             <Route element={<PrivateRoute allowedRoles={['Client', 'Trainer', 'Admin-Staff']}/>}>
-              <Route path="/home" element={<HomePage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/home" element={<HomeRole />} />
             </Route>
 
             {/* Client */}

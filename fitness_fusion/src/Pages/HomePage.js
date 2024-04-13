@@ -43,6 +43,10 @@ function HomePage() {
                     <p>Track Your Achievments</p>
                 </div>
 
+                <div className="image" id = 'billings' onClick={() => handleIconClick('/billing')}>
+                    <p>Pay Account Balance</p>
+                </div>
+
             </div>
 
 

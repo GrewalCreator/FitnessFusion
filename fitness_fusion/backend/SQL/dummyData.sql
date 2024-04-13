@@ -1,19 +1,32 @@
 
-INSERT INTO Rooms (RoomNumber) VALUES
-(101),
-(102),
-(103),
-(104),
-(105) ON CONFLICT (RoomNumber) DO NOTHING;
+INSERT INTO Rooms (RoomNumber)
+VALUES 
+    (111),
+    (112),
+    (113),
+    (114),
+    (115),
+    (116),
+    (117),
+    (118),
+    (119),
+    (120);
 
 
-INSERT INTO Equipment (EquipmentName, isAvailable) VALUES
-('Treadmill', true),
-('Treadmill', true),
-('Treadmill', false),
-('Smith Machine', true),
-('Rowing Machine', true),
-('Rowing Machine', true),
-('Hammer Strength Machine', true),
-('Preacher Curl Bench', true),
-('Preacher Curl Bench', true)
+INSERT INTO Equipment (EquipmentName, isAvailable)
+VALUES 
+    ('Treadmill', TRUE),
+    ('Dumbbells', TRUE),
+    ('Yoga Mat', FALSE),
+    ('Resistance Bands', TRUE),
+    ('Jump Rope', TRUE),
+    ('Stationary Bike', TRUE),
+    ('Barbell', TRUE),
+    ('Kettlebell', TRUE),
+    ('Medicine Ball', FALSE),
+    ('Weight Bench', TRUE),
+    ('Dumbbells', TRUE),
+    ('Yoga Mat', TRUE),
+    ('Jump Rope', TRUE),
+    ('Resistance Bands', FALSE),
+    ('Medicine Ball', TRUE);

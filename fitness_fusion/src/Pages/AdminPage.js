@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Components/NavBar';
 import '../assets/adminPage.css'
+import { AuthContext } from '../Components/AuthContext';
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
 
   const handleViewClients = () => {
@@ -19,6 +21,11 @@ const AdminPage = () => {
     navigate('/equipment')
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+};
+
 
   return (
     <div>
@@ -30,6 +37,7 @@ const AdminPage = () => {
                 <button onClick={handleAdjustSchedule} className="rounded-button">Adjust Group Schedule</button>
                 <button onClick={handleEquipment} className="rounded-button">Manage Equipment</button>
             </div>  
+            <button onClick={handleLogout}>Logout</button>
         </div>
     </div>
   );

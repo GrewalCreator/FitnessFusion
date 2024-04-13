@@ -22,7 +22,7 @@ security = None
 def billing_simulator():
     
     while True:
-        time.sleep(300)  # How Often Client Should Be Billed
+        time.sleep(10)  # How Often Client Should Be Billed
         with psycopg2.connect(url) as connection:
             try:
                 with connection.cursor() as cursor:
