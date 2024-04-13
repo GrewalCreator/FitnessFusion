@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 export const AuthContext = createContext();
 
@@ -12,23 +12,61 @@ export const AuthProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem('email')) || null;
   });
 
+  const [role, setRole] = useState(() => {
+    return JSON.parse(localStorage.getItem('role')) || null;
+  });
+
 
   // Set Variable and remove cache
-  const setAuth = (loggedIn, userEmail) => {
+  const setAuth = useCallback((loggedIn, userEmail) => {
     setIsLoggedIn(loggedIn);
     setEmail(userEmail);
-    localStorage.setItem('isLoggedIn', JSON.stringify(loggedIn));
     localStorage.setItem('email', JSON.stringify(userEmail));
-  };
-
-  const logout = () => {
-    setAuth(false, null, '');
+    localStorage.setItem('isLoggedIn', JSON.stringify(loggedIn));
+  }, []);
+  
+  const logout = useCallback(() => {
+    setAuth(false, null, '', null);
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('email');
-  };
+    localStorage.removeItem('role');
+  }, [setAuth]);
+  
+  
+
+  const fetchMemberType = useCallback(async (email) => {
+    try {
+      const response = await fetch('/getMemberType', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setRole(data[0]);
+        localStorage.setItem('role', JSON.stringify(data[0]));
+      } else {
+        const errorData = await response.json();
+        const errorMessage = errorData.error.message;
+        alert(`Error: ${errorMessage}`);
+        logout();
+      }
+    } catch (error) {
+      console.error('Failed to fetch Role Data:', error);
+    }
+  }, [logout]);
+
+  useEffect(() => {
+    if (email) {
+      fetchMemberType(email);
+    }
+  }, [email, fetchMemberType]);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, email, setAuth, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, email, setAuth, logout, role }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,0 +1,23 @@
+
+.group-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+
+.list-session-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.list-session-field {
+    margin-right: 10px;
+}
+
+.list-session-value {
+    margin-left: 10px;
+}

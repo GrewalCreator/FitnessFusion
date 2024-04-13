@@ -39,19 +39,19 @@ const BillingPage = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 'payment': parseFloat(paymentAmount), email }) // Parse paymentAmount to float before sending
+        body: JSON.stringify({ 'payment': parseFloat(paymentAmount), email }) 
       });
 
       if (response.ok) {
         console.log('Payment successful');
-        setPaymentMade(!paymentMade); // Toggle paymentMade state to force useEffect to run again
+        setPaymentMade(!paymentMade); 
       } else {
         const errorData = await response.json(); 
         const errorMessage = errorData.error.message; 
         alert(`Error: ${errorMessage}`);
       }
       
-      setPaymentAmount(''); // Clear paymentAmount after successful payment
+      setPaymentAmount(''); 
       
     } catch (error) {
       console.error('Error processing payment:', error);

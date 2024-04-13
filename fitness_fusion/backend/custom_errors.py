@@ -32,3 +32,11 @@ PAYMENT_FAILED = Error(500, "Payment Failed. Please Try Again Later. If The Issu
 DELETE_FAILED = Error(500, "Failed To Commit Deletion", "DELETE_FAILED")
 
 SESSION_UNAVAILABLE = Error(409, "Session Is Unavailable", "SESSION_UNAVAILABLE")
+
+GOAL_EXISTS = Error(409, "Goal Already Exists, Please Mark As Completed or Delete", "GOAL_EXISTS")
+
+UPDATE_FAILED = Error(400, "Update Failed. Please Try Again", "UPDATE_FAILED")
+
+ROOM_UNAVAILABLE = Error(400, "Room Unavailable","ROOM_UNAVAILABLE")
+
+SESSION_NOT_FOUND = Error(404, "Session Not Found", "SESSION_NOT_FOUND")

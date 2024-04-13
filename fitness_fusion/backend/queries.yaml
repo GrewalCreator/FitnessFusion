@@ -11,6 +11,8 @@ sql:
 
     searchTrainersByEmail: SELECT 1 FROM Members WHERE Email = %s AND MemberType = 'Trainer';
 
+    searchStaffByEmail: SELECT 1 FROM Members WHERE Email = %s AND (MemberType = 'Trainer' OR MemberType = 'Admin-Staff');
+
     searchClientsByEmail:  >
                             SELECT 1
                             FROM (
@@ -105,15 +107,21 @@ sql:
     deleteMember: DELETE FROM Members WHERE Email = %s;
 
 
-    addSession: WITH trainer AS (
+    addSession: >
+                BEGIN;
+
+                WITH trainer AS (
                     SELECT MemberID
                     FROM Members
                     WHERE Email = %s
                 )
-                INSERT INTO WorkoutSessions (MemberID, StartTime, Duration_Minutes, isBooked, SessionType)
-                SELECT MemberID, %s, %s, FALSE, %s
+                INSERT INTO WorkoutSessions (MemberID, StartTime, Duration_Minutes, isBooked, SessionType, RoomNumber)
+                SELECT MemberID, %s, %s, FALSE, %s, %s
                 FROM trainer;
 
+                
+
+                COMMIT;
 
     checkTrainerAvailability: >
             SELECT NOT EXISTS (
@@ -133,7 +141,132 @@ sql:
 
 
 
-                
+    checkRoomAvailability: >
+            SELECT NOT EXISTS (
+                SELECT 1
+                FROM WorkoutSessions
+                WHERE RoomNumber = %s
+                AND NOT (
+                    (StartTime + (Duration_Minutes * interval '1 minute')) <= %s
+                    OR
+                    StartTime >= (%s + (%s * interval '1 minute'))
+                )
+            ) AS is_available;
 
 
-                
+
+
+    addGoal: >
+            WITH ClientInfo AS (
+                SELECT MemberID
+                FROM Members
+                WHERE Email = %s
+            )
+            INSERT INTO Goals (MemberID, GoalType, GoalTarget)
+            SELECT MemberID, %s, %s 
+            FROM ClientInfo;
+
+    completeGoal: >
+            UPDATE Goals
+            SET isCompleted = TRUE
+            WHERE MemberID = (
+                SELECT MemberID
+                FROM Members
+                WHERE Email = %s
+            ) AND GoalType = %s AND GoalTarget = %s AND DateCreated = %s;
+
+
+    searchClientsGoalByEmail: >
+                SELECT GoalType, GoalTarget, DateCreated
+                FROM Goals g
+                JOIN Members m ON g.MemberID = m.MemberID
+                JOIN Clients c ON m.MemberID = c.MemberID
+                WHERE m.Email = %s AND g.isCompleted = %s;
+
+
+    deleteGoal: >
+            DELETE FROM Goals
+            WHERE MemberID = (
+                SELECT MemberID
+                FROM Members
+                WHERE Email = %s
+            ) AND GoalType = %s AND GoalTarget = %s AND DateCreated = %s AND isCompleted = %s;
+    
+
+    getAchievements: >
+            SELECT
+                MAX(CASE WHEN g.GoalType = 'deadlift' THEN g.GoalTarget END) AS max_deadlift,
+                MAX(CASE WHEN g.GoalType = 'squat' THEN g.GoalTarget END) AS max_squat,
+                MAX(CASE WHEN g.GoalType = 'benchpress' THEN g.GoalTarget END) AS max_benchpress
+            FROM
+                Goals g
+            JOIN
+                Members m ON g.MemberID = m.MemberID
+            JOIN
+                Clients c ON m.MemberID = c.MemberID
+            WHERE
+                m.Email = %s AND
+                g.isCompleted = TRUE;
+
+    getAllRooms: >
+            SELECT RoomNumber FROM Rooms;
+    
+    
+    getSessionID: >
+            SELECT
+                SessionID
+            FROM
+                WorkoutSessions
+            WHERE
+                SessionID = %s;
+
+    getMemberID: >
+            SELECT
+                MemberID
+            FROM
+                Members
+            WHERE
+                Email = %s;
+
+    bookSession: >
+            BEGIN;
+
+                UPDATE
+                    WorkoutSessions
+                SET
+                    isBooked = TRUE,
+                    Participants = Participants + 1
+                WHERE
+                    SessionID = %s
+                    AND isBooked = FALSE
+                    AND (SessionType = 'private' OR (SessionType = 'group' AND Participants < 3));
+
+                UPDATE
+                    Clients
+                SET
+                    SessionIDs = array_append(SessionIDs, %s)
+                WHERE
+                    MemberID = %s
+                    AND NOT %s = ANY (SELECT unnest(SessionIDs) FROM Clients WHERE MemberID = %s);
+
+
+            COMMIT;
+
+    getAllGroupSessions: >
+            SELECT
+                ws.SessionID,
+                CONCAT(m.FirstName, ' ', m.LastName) AS FullName,
+                ws.StartTime,
+                ws.Duration_Minutes,
+                ws.RoomNumber,
+                ws.Participants
+            FROM
+                WorkoutSessions ws
+            INNER JOIN
+                Members m ON ws.MemberID = m.MemberID
+            LEFT JOIN
+                Clients c ON ws.SessionID = ANY(c.SessionIDs)
+            WHERE
+                ws.SessionType = 'group'
+                AND ws.isBooked = FALSE
+                AND NOT ws.SessionID = ANY (SELECT unnest(SessionIDs) FROM Clients WHERE MemberID = %s);

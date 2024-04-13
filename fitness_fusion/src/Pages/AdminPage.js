@@ -22,7 +22,7 @@ const AdminPage = () => {
         <div className='admin-page'>
             <h2>Admin Page</h2>
             <div className="button-grid">
-                <button onClick={handleViewClientsClick} className="rounded-button">View Clients</button>
+                <button onClick={handleViewClientsClick} className="rounded-button">View Clients Billing</button>
                 <button onClick={handleAdjustScheduleClick} className="rounded-button">Adjust Group Schedule</button>
             </div>  
         </div>
