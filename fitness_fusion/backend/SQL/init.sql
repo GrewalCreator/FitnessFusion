@@ -17,8 +17,6 @@ CREATE TABLE IF NOT EXISTS Clients (
     FOREIGN KEY (MemberID) REFERENCES Members(MemberID) ON DELETE CASCADE
 );
 
-
-
 CREATE TABLE IF NOT EXISTS Goals (
     GoalID SERIAL PRIMARY KEY,
     MemberID INT NOT NULL,
@@ -58,3 +56,6 @@ CREATE TABLE IF NOT EXISTS WorkoutSessions (
 CREATE INDEX IF NOT EXISTS member_email_index ON Members (Email);
 CREATE INDEX IF NOT EXISTS members_memberid_index ON Members (MemberID);
 CREATE INDEX IF NOT EXISTS clients_memberid_index ON Clients (MemberID);
+CREATE INDEX IF NOT EXISTS goals_memberid_index ON Goals (MemberID);
+CREATE INDEX IF NOT EXISTS workoutsessions_memberid_index ON WorkoutSessions (MemberID);
+CREATE INDEX IF NOT EXISTS workoutsessions_starttime_index ON WorkoutSessions (StartTime);

@@ -272,3 +272,9 @@ sql:
                 AND NOT ws.SessionID = ANY (SELECT unnest(SessionIDs) FROM Clients WHERE MemberID = %s);
 
 
+    getEquipment: SELECT EquipmentID, EquipmentName, isAvailable FROM Equipment;
+
+    toggleEquipment: >
+                UPDATE Equipment
+                SET isAvailable = %s
+                WHERE EquipmentID = %s;
