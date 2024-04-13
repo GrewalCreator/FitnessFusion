@@ -49,3 +49,9 @@
     background-size: 83%;
     background-repeat: no-repeat;
 }
+
+#billings {
+    background-image: url('../assets/bill.png'); 
+    background-size: 95%;
+    background-repeat: no-repeat;
+}

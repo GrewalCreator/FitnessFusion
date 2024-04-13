@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../Components/AuthContext';
 import '../assets/trainerPage.css'
 import Navbar from '../Components/NavBar';
 
 const TrainerPage = () => {
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+      logout();
+      navigate('/login');
+  };
 
   const handleViewClientsClick = () => {
     navigate('/trainerClientManagement');
@@ -24,6 +31,8 @@ const TrainerPage = () => {
                 <button onClick={handleAdjustScheduleClick} className="rounded-button">Adjust Personal Schedule</button>
         
             </div>
+
+            <button onClick={handleLogout}>Logout</button>
         </div>
     </div>
     
