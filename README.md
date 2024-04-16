@@ -6,6 +6,12 @@ Types of Members:
 - Trainer
 - Admin-Staff
 
+
+## How to Run
+- add a confg.ini file containing the password to your database. A template can be found in the repo as 'exampleConfig.ini'
+
+
+
 What Can Clients Do?:
 - Register and Login to their accounts, manage their personal profile
 - Establish personal fitness goals [Goals Such as Weight and Goal Date] and other health metrics [Daily Calorie intake, steps, etc]
@@ -40,16 +46,6 @@ What Can Admin-Staff Do?:
 
 
 ## Development
-
-### Error Codes
-- 400 MISSING_ENTRY: Input Entry Missing
-- 400 INVALID_DOB: Invalid Date of Birth, Ensure Format is YYYY-MM-DD
-- 400 INVALID_PASSWORD: Invalid Password
-- 400 INVALID_EMAIL: Invalid Email
-- 400 INVALID_GENDER: Invalid Gender. Please Enter Male, Female, or Other (M, F, O)
-- 400 INVALID_MEMBER_TYPE: Invalid Member Type. Expected: Client, Trainer, Admin-Staff
-- 409 EMAIL_UNAVAILABLE: Email Unavailable, Already In Use
-- 404 EMAIL_NOT_FOUND: Email Not Found
 
 ### Endpoints
 Sample Input Can Be Found Here:
